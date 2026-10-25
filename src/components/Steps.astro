@@ -1,0 +1,17 @@
+---
+import { t, type Lang } from '../i18n/content';
+interface Props { lang: Lang }
+const c = t[Astro.props.lang];
+---
+<div class="steps-wrap" data-steps>
+  <span class="steps-line" aria-hidden="true"><span></span></span>
+  <ol class="steps">
+    {c.method.steps.map((s, i) => (
+      <li class="reveal" style={`--d:${i}`}>
+        <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+        <h3>{s.name}</h3>
+        <p>{s.text}</p>
+      </li>
+    ))}
+  </ol>
+</div>

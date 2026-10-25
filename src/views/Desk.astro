@@ -1,0 +1,85 @@
+---
+// Nexora Service Desk: the walk-in counter services, each with a prefilled WhatsApp request. No prices online.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, t, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import { desk } from '../i18n/desk';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const d = desk[lang];
+const wa = (text: string) => `${company.whatsapp}?text=${encodeURIComponent(text)}`;
+---
+<Page lang={lang} page="desk" title={d.meta.title} description={d.meta.description}>
+  <PageHero lang={lang} eyebrow={d.eyebrow} title={d.title} lede={d.lede} cta={false} crumbs={[{ key: 'services', label: c.nav[0].label }]}>
+    <div class="ticket" aria-hidden="true" data-viz>
+      <div class="ticket-head"><img src="/img/logo-white.png" alt="" width="34" height="25" /><span><b>{d.ticket.head}</b><small>NEXORA SERVICES COMPANY LTD</small></span></div>
+      <ul>
+        {d.services.map((s, i) => (
+          <li style={`--i:${i}`}><span class="ticket-ico"><Icon name={s.icon} size={18} /></span><span>{s.name}</span><span class="ticket-ok"><Icon name="check" size={14} />{d.ticket.ready}</span></li>
+        ))}
+      </ul>
+      <div class="ticket-foot"><span>{d.ticket.receipt}</span><span class="ticket-code">NXR · SD</span></div>
+    </div>
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{d.listEyebrow}</p><h2>{d.listTitle}</h2></header>
+      <div class="desk-grid">
+        {d.services.map((s, i) => (
+          <article class="desk-card reveal" style={`--d:${i % 4}`} id={s.id}>
+            <span class="desk-ico"><Icon name={s.icon} size={24} /></span>
+            <h3>{s.name}</h3>
+            <p>{s.text}</p>
+            <ul class="ticks">{s.points.map((x) => <li><Icon name="check" size={16} />{x}</li>)}</ul>
+            <a class="desk-cta" href={wa(s.wa)} target="_blank" rel="noopener"><Icon name="whatsapp" size={16} />{d.ask}</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap split-2">
+      <header class="section-head reveal"><p class="eyebrow">{d.howEyebrow}</p><h2>{d.howTitle}</h2></header>
+      <ol class="next desk-how">
+        {d.how.map((x, i) => <li class="reveal" style={`--d:${i}`}><span>{String(i + 1).padStart(2, '0')}</span><h3>{x.name}</h3><p>{x.text}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-navy">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow eyebrow-teal">{d.promiseEyebrow}</p><h2>{d.promiseTitle}</h2></header>
+      <div class="desk-promises">
+        {d.promises.map((x, i) => (
+          <div class="desk-promise reveal" style={`--d:${i}`}><span class="desk-ico"><Icon name={x.icon} size={22} /></span><h3>{x.name}</h3><p>{x.text}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{d.nextEyebrow}</p><h2>{d.nextTitle}</h2></header>
+      <div class="starts">
+        {d.next.map((x, i) => (
+          <a class="start reveal" style={`--d:${i}`} href={href(lang, x.key)}><h3>{x.name}</h3><p>{x.text}</p><span class="more">{c.divisions.items.find((v) => v.key === x.key)!.name}<Icon name="arrow" size={18} /></span></a>
+        ))}
+      </div>
+      <div class="desk-visit reveal">
+        <h3>{d.visit}</h3>
+        <div class="offices">
+          {c.contact.offices.map((o) => <address class="office"><span class="office-icon"><Icon name="map" size={20} /></span><span><strong>{o.label}</strong>{o.lines.map((l) => <span class="l">{l}</span>)}</span></address>)}
+        </div>
+        <p class="desk-call">{d.call} <a href={company.tel}>{company.phone}</a></p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={d.bandTitle} text={d.bandText} />
+</Page>

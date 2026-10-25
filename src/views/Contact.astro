@@ -1,0 +1,37 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactBlock from '../components/ContactBlock.astro';
+import { type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+import { startHref } from '../i18n/routes';
+import { st } from '../i18n/start';
+import Icon from '../components/Icon.astro';
+import Booking from '../components/Booking.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = pt[lang].contactPage;
+const g = st[lang].contactCard;
+---
+<Page lang={lang} page="contact" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede} cta={false} size="sm" />
+  <section class="section">
+    <div class="wrap">
+      <a class="guided reveal" href={startHref(lang)}>
+        <span class="guided-ico"><Icon name="compass" size={24} /></span>
+        <span class="guided-txt"><b>{g.title}</b><small>{g.text}</small></span>
+        <span class="btn btn-teal btn-sm">{g.cta}<Icon name="arrow" size={16} /></span>
+      </a>
+      <div class="contact-booking reveal"><Booking lang={lang} /></div>
+      <ContactBlock lang={lang} sent={p.sent} />
+    </div>
+  </section>
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><h2>{p.nextTitle}</h2></header>
+      <ol class="next">
+        {p.next.map((x, i) => <li class="reveal" style={`--d:${i}`}><span>{String(i + 1).padStart(2, '0')}</span><h3>{x.name}</h3><p>{x.text}</p></li>)}
+      </ol>
+    </div>
+  </section>
+</Page>

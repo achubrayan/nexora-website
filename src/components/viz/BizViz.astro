@@ -1,0 +1,62 @@
+---
+// Animated management dashboard for Business Solutions. Figures are an illustrative example, labelled as such.
+import type { Lang } from '../../i18n/content';
+interface Props { lang: Lang; id?: string }
+const { lang, id = 'biz' } = Astro.props;
+const L = {
+  fr: { title: 'Tableau de bord de gestion', ex: 'Exemple illustratif', k: ["Chiffre d'affaires", 'Marge brute', 'Délai de traitement'], sales: 'Ventes mensuelles', target: 'Objectif', sop: 'Processus documentés', inPlace: 'SOP en place', done: 'Documentés', todo: 'À formaliser', aria: "Exemple illustratif de tableau de bord : chiffre d'affaires en hausse de 18 %, marge brute de 32 %, délai de traitement réduit de 27 %, 72 % des processus documentés." },
+  en: { title: 'Management dashboard', ex: 'Illustrative example', k: ['Revenue', 'Gross margin', 'Processing time'], sales: 'Monthly sales', target: 'Target', sop: 'Documented processes', inPlace: 'SOPs in place', done: 'Documented', todo: 'To formalise', aria: 'Illustrative dashboard example: revenue up 18%, gross margin 32%, processing time down 27%, 72% of processes documented.' },
+}[lang];
+const kpis = [
+  { label: L.k[0], n: 18, pre: '+', suf: '%', spark: 'M0 18 L10 15 L20 16 L30 10 L40 11 L50 4' },
+  { label: L.k[1], n: 32, pre: '', suf: '%', spark: 'M0 14 L10 13 L20 10 L30 11 L40 7 L50 6' },
+  { label: L.k[2], n: 27, pre: '−', suf: '%', spark: 'M0 4 L10 6 L20 8 L30 9 L40 14 L50 16' },
+];
+const heights = [62, 84, 78, 102, 114, 108, 134, 150, 170];
+const base = 382, bw = 20, gap = 12, x0 = 46;
+const tops = heights.map((h, i) => [x0 + i * (bw + gap) + bw / 2, base - h - 16] as [number, number]);
+const line = tops.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
+const [ex, ey] = tops[tops.length - 1];
+---
+<svg id={`${id}-svg`} class="viz viz-biz" data-viz viewBox="0 0 560 420" role="img" aria-label={L.aria} xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3168" /><stop offset="1" stop-color="#000f26" /></linearGradient>
+    <linearGradient id={`${id}-bar`} x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#035ca0" /><stop offset="1" stop-color="#2f86d6" /></linearGradient>
+    <linearGradient id={`${id}-hi`} x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#11aaa8" /><stop offset="1" stop-color="#3fd0cd" /></linearGradient>
+  </defs>
+  <rect class="v-frame" width="560" height="420" rx="22" fill={`url(#${id}-bg)`} />
+  <g class="v-top">
+    <circle cx="26" cy="26" r="4" /><circle cx="40" cy="26" r="4" /><circle cx="54" cy="26" r="4" />
+    <text x="74" y="31" class="v-title">{L.title}</text>
+    <rect x="404" y="13" width="138" height="26" rx="13" class="v-pill" /><text x="473" y="30.5" text-anchor="middle" class="v-pill-t">{L.ex}</text>
+  </g>
+  {kpis.map((k, i) => (
+    <g transform={`translate(${20 + i * 180} 58)`}><g class="v-in" style={`--i:${i}`}>
+      <rect width="160" height="84" rx="14" class="v-card" />
+      <text x="16" y="27" class="v-label">{k.label}</text>
+      <text x="16" y="64" class="v-big"><tspan data-count={k.n} data-pre={k.pre} data-suf={k.suf}>{k.pre}{k.n}{k.suf}</tspan></text>
+      <path d={k.spark} transform="translate(114 46) scale(.75)" class="v-spark" pathLength="1" />
+    </g></g>
+  ))}
+  <g class="v-in" style="--i:3">
+    <rect x="20" y="158" width="332" height="244" rx="14" class="v-card" />
+    <text x="36" y="185" class="v-label">{L.sales}</text>
+    <circle cx="268" cy="181" r="4" class="v-dot-line" /><text x="278" y="185" class="v-small">{L.target}</text>
+    {[0, 1, 2, 3].map((g) => <line x1="36" x2="336" y1={base - g * 44} y2={base - g * 44} class="v-grid" />)}
+    {heights.map((h, i) => (
+      <rect class:list={['v-bar', { 'v-bar-hi': i === heights.length - 1 }]} style={`--i:${i}`} x={x0 + i * (bw + gap)} y={base - h} width={bw} height={h} rx="5" fill={i === heights.length - 1 ? `url(#${id}-hi)` : `url(#${id}-bar)`} />
+    ))}
+    <path d={line} class="v-line" pathLength="1" />
+    <circle cx={ex} cy={ey} r="11" class="v-ring" /><circle cx={ex} cy={ey} r="4.5" class="v-end" />
+  </g>
+  <g class="v-in" style="--i:4">
+    <rect x="370" y="158" width="170" height="244" rx="14" class="v-card" />
+    <text x="386" y="185" class="v-label">{L.sop}</text>
+    <circle cx="455" cy="268" r="50" class="v-track" />
+    <circle cx="455" cy="268" r="50" class="v-arc" pathLength="100" transform="rotate(-90 455 268)" />
+    <text x="455" y="268" text-anchor="middle" class="v-big"><tspan data-count="72" data-suf="%">72%</tspan></text>
+    <text x="455" y="288" text-anchor="middle" class="v-small">{L.inPlace}</text>
+    <circle cx="390" cy="352" r="5" fill="#3fd0cd" /><text x="402" y="356" class="v-small">{L.done} · 72%</text>
+    <circle cx="390" cy="376" r="5" fill="rgba(255,255,255,.22)" /><text x="402" y="380" class="v-small">{L.todo} · 28%</text>
+  </g>
+</svg>

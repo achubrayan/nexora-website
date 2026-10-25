@@ -1,0 +1,70 @@
+---
+// One Insights guide, with its table of contents, takeaway and a call to action.
+import Page from '../layouts/Page.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, t, type Lang } from '../i18n/content';
+import { href, startHref, routes } from '../i18n/routes';
+import { articles, type Article } from '../i18n/insights';
+interface Props { lang: Lang; article: Article }
+const { lang, article: a } = Astro.props;
+const c = t[lang];
+const L = { fr: { back: 'Ressources', min: 'min de lecture', by: 'Équipe Nexora', toc: 'Sommaire', key: 'À retenir', more: 'Autres guides', read: 'Lire' }, en: { back: 'Insights', min: 'min read', by: 'Nexora team', toc: 'Contents', key: 'Key takeaway', more: 'More guides', read: 'Read' } }[lang];
+const paths = { fr: `${routes.insights.fr}${a.slug.fr}/`, en: `${routes.insights.en}${a.slug.en}/` };
+const url = (p: string) => new URL(p, company.site).href;
+const date = new Date(a.date).toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+const anchor = (i: number) => `s${i + 1}`;
+const ctaHref = a.cta.to === 'checklist' ? href(lang, 'checklist') : startHref(lang, { d: a.cta.d, s: a.cta.s });
+const others = articles.filter((x) => x.id !== a.id);
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'Article', headline: a.title[lang], description: a.excerpt[lang], datePublished: a.date, inLanguage: lang, image: url(`/og/${lang}-insight-${a.id}.jpg`), mainEntityOfPage: url(paths[lang]), author: { '@type': 'Organization', name: company.legalName }, publisher: { '@type': 'Organization', name: company.legalName, logo: { '@type': 'ImageObject', url: url('/img/logo-color.png') } } },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [[c.home, routes.home[lang]], [L.back, routes.insights[lang]], [a.title[lang], paths[lang]]].map(([name, p], i) => ({ '@type': 'ListItem', position: i + 1, name, item: url(p) })) },
+];
+---
+<Page lang={lang} page="insights" title={`${a.title[lang]} · Nexora`} description={a.excerpt[lang]} paths={paths} og={`insight-${a.id}`} schema={schema}>
+  <section class="page-hero page-hero-sm article-hero">
+    <div class="hero-bg" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="grid-lines"></span></div>
+    <div class="wrap article-hero-inner">
+      <nav class="crumbs" aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}><a href={href(lang, 'home')}>{c.home}</a><span aria-hidden="true">/</span><a href={href(lang, 'insights')}>{L.back}</a></nav>
+      <p class="badge"><span class="dot"></span>{a.category[lang]}</p>
+      <h1>{a.title[lang]}</h1>
+      <p class="article-meta"><span>{L.by}</span><span><time datetime={a.date}>{date}</time></span><span>{a.minutes} {L.min}</span></p>
+    </div>
+  </section>
+  <section class="section article-section">
+    <div class="wrap article-grid">
+      <aside class="article-toc">
+        <p class="eyebrow">{L.toc}</p>
+        <ol>{a.body[lang].map((b, i) => <li><a href={`#${anchor(i)}`}>{b.h}</a></li>)}</ol>
+      </aside>
+      <article class="article">
+        {a.intro[lang].map((p, i) => <p class:list={{ 'article-lede': i === 0 }}>{p}</p>)}
+        {a.body[lang].map((b, i) => (
+          <section id={anchor(i)}>
+            <h2>{b.h}</h2>
+            {b.p && b.p.map((p) => <p>{p}</p>)}
+            {b.list && <ul class="ticks">{b.list.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>}
+          </section>
+        ))}
+        <div class="takeaway"><p class="eyebrow">{L.key}</p><p>{a.takeaway[lang]}</p></div>
+        {a.disclaimer && <p class="article-disclaimer">{a.disclaimer[lang]}</p>}
+        <a class="btn btn-teal btn-lg article-cta" href={ctaHref}>{a.cta.label[lang]}<Icon name="arrow" size={18} /></a>
+      </article>
+    </div>
+  </section>
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><h2>{L.more}</h2></header>
+      <div class="guides guides-2">
+        {others.map((o, i) => (
+          <a class={`guide reveal guide-${o.division}`} style={`--d:${i}`} href={`${routes.insights[lang]}${o.slug[lang]}/`}>
+            <span class="guide-top"><span class="guide-cat">{o.category[lang]}</span><span class="guide-meta">{o.minutes} {L.min}</span></span>
+            <h3>{o.title[lang]}</h3><p>{o.excerpt[lang]}</p>
+            <span class="guide-foot"><span></span><span class="offer-cta">{L.read}<Icon name="arrow" size={18} /></span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

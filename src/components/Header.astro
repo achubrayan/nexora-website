@@ -1,0 +1,66 @@
+---
+import { t, type Lang } from '../i18n/content';
+import { href, routes, startHref, type PageKey, type Paths } from '../i18n/routes';
+import ContactLinks from './ContactLinks.astro';
+import { desk } from '../i18n/desk';
+interface Props { lang: Lang; page: PageKey; paths?: Paths }
+const { lang, page, paths } = Astro.props;
+const c = t[lang];
+const divisionKeys: PageKey[] = ['business', 'hr', 'travel', 'checklist', 'desk'];
+const dm = desk[lang].menu;
+const active = (k: PageKey) => k === page || (k === 'services' && divisionKeys.includes(page));
+const other = c.otherLang.lang;
+---
+<a class="skip" href="#main">{c.skip}</a>
+<header class="site-header" data-header>
+  <div class="topbar"><div class="wrap topbar-row"><span class="topbar-note">{c.hero.badge}</span><ContactLinks lang={lang} /></div></div>
+  <div class="wrap header-row">
+    <a class="brand" href={href(lang, 'home')} aria-label="Nexora Services Company Ltd">
+      <img src="/img/logo-white.png" alt="" width="42" height="31" />
+      <span class="brand-text"><b>NEXORA</b><small>SERVICES COMPANY LTD</small></span>
+    </a>
+    <nav class="nav-desktop" aria-label="Navigation">
+      {c.nav.map((n) => n.key === 'services' ? (
+        <div class="nav-item has-menu">
+          <a href={href(lang, n.key)} aria-current={active(n.key) ? 'page' : undefined}>{n.label}<svg class="chev" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></a>
+          <div class="mega">
+            <div class="mega-inner">
+              {c.divisions.items.map((d) => (
+                <a class="mega-link" href={href(lang, d.key)} aria-current={page === d.key ? 'page' : undefined}>
+                  <span class="mega-num">{d.tag}</span>
+                  <span><b>{d.name}</b><small>{d.line}</small></span>
+                </a>
+              ))}
+              <a class="mega-link mega-desk" href={href(lang, 'desk')} aria-current={page === 'desk' ? 'page' : undefined}>
+                <span class="mega-num">{dm.tag}</span>
+                <span><b>{dm.name}</b><small>{dm.line}</small></span>
+              </a>
+              <a class="mega-all" href={href(lang, 'services')}>{c.allServices} →</a>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <a href={href(lang, n.key)} aria-current={active(n.key) ? 'page' : undefined}>{n.label}</a>
+      ))}
+    </nav>
+    <div class="header-actions">
+      <a class="lang" href={(paths ?? routes[page])[other]} hreflang={other} lang={other} aria-label={c.otherLang.label}>{c.otherLang.code}</a>
+      <a class="btn btn-teal btn-sm hide-sm" href={startHref(lang)}>{c.cta}</a>
+      <details class="nav-mobile">
+        <summary aria-label={c.menu}><span class="burger" aria-hidden="true"></span></summary>
+        <nav aria-label={c.menu}>
+          <a href={href(lang, 'home')} aria-current={page === 'home' ? 'page' : undefined}>{c.home}</a>
+          {c.nav.map((n) => (
+            <>
+              <a href={href(lang, n.key)} aria-current={active(n.key) ? 'page' : undefined}>{n.label}</a>
+              {n.key === 'services' && c.divisions.items.map((d) => <a class="sub" href={href(lang, d.key)} aria-current={page === d.key ? 'page' : undefined}>{d.name}</a>)}
+              {n.key === 'services' && <a class="sub" href={href(lang, 'desk')} aria-current={page === 'desk' ? 'page' : undefined}>{dm.name}</a>}
+            </>
+          ))}
+          <a class="btn btn-teal" href={startHref(lang)}>{c.cta}</a>
+          <ContactLinks lang={lang} variant="cards" />
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>

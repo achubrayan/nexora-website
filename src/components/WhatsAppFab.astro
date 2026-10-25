@@ -1,0 +1,9 @@
+---
+import { company, t, type Lang } from '../i18n/content';
+import Icon from './Icon.astro';
+interface Props { lang: Lang }
+const c = t[Astro.props.lang];
+---
+<a class="wa-fab" href={`${company.whatsapp}?text=${encodeURIComponent(c.waText)}`} target="_blank" rel="noopener" aria-label={`${c.chat} · ${company.phone}`}>
+  <Icon name="whatsapp" size={28} /><span class="wa-fab-label">{c.chat}</span>
+</a>

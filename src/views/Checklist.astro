@@ -1,0 +1,160 @@
+---
+// Visa document checklist: pick a destination and a visa type, tick documents off, print or save as PDF.
+// Every list is rendered at build time; the script only shows the right one. Indicative only.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import { company, t, type Lang } from '../i18n/content';
+import { href, startHref } from '../i18n/routes';
+import { pt } from '../i18n/pages';
+import { destinations, type Visa } from '../lib/mobility';
+import { checklist, groupOf, type Group } from '../lib/checklist';
+import { faq } from '../i18n/faq';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const tp = pt[lang].travel;
+const L = {
+  fr: {
+    meta: { title: 'Liste des documents visa · Travel & Mobilité · Nexora', description: "Outil gratuit : choisissez votre destination et votre type de visa (travail, études, visite ou Schengen) et obtenez la liste indicative des documents à préparer, à cocher et à imprimer." },
+    eyebrow: 'Outil gratuit · Travel & Mobilité', title: 'Votre liste de documents visa, en une minute.',
+    lede: 'Choisissez votre destination et le type de visa. Vous obtenez la liste des documents généralement demandés, à cocher au fur et à mesure et à enregistrer en PDF.',
+    dest: 'Destination', visa: 'Type de visa', print: 'Imprimer ou enregistrer en PDF', wa: 'Faire vérifier mon dossier', start: 'Démarrer une demande',
+    listFor: 'Liste indicative', ready: 'prêts', notAvailable: 'Non proposé pour cette destination',
+    disclaimer: "Liste indicative, établie à partir des exigences les plus courantes. La liste officielle est celle du consulat ou du centre de visa et peut changer. Nexora vous aide à la confirmer et à préparer un dossier complet et exact : assistance documentaire uniquement, la décision appartient à l'ambassade.",
+    tipsTitle: 'Bon à savoir',
+    tips: ['Les documents qui ne sont ni en français ni en anglais demandent souvent une traduction assermentée.', 'Ne présentez jamais un document modifié ou douteux : un faux document peut entraîner un refus et une interdiction durable.', 'Nexora ne conserve jamais votre passeport.', 'Gardez une copie numérique de chaque pièce déposée.'],
+    generated: 'Générée sur nexoraservicescompany.com',
+    waText: (v: string, d: string) => `Bonjour Nexora, je prépare un dossier de ${v.toLowerCase()} pour : ${d}. Pouvez-vous m'aider à vérifier ma liste de documents ?`,
+    faqTitle: 'Questions fréquentes',
+  },
+  en: {
+    meta: { title: 'Visa document checklist · Travel & Mobility · Nexora', description: 'Free tool: choose your destination and visa type (work, study, visit or Schengen) and get the indicative list of documents to prepare, tick off and print.' },
+    eyebrow: 'Free tool · Travel & Mobility', title: 'Your visa document checklist, in one minute.',
+    lede: 'Choose your destination and visa type. You get the list of documents usually requested, to tick off as you go and save as a PDF.',
+    dest: 'Destination', visa: 'Visa type', print: 'Print or save as PDF', wa: 'Have my file checked', start: 'Start a request',
+    listFor: 'Indicative checklist', ready: 'ready', notAvailable: 'Not offered for this destination',
+    disclaimer: 'Indicative list based on the most common requirements. The official list is the consulate’s or visa centre’s and can change. Nexora helps you confirm it and prepare a complete and accurate file: document assistance only, the decision belongs to the embassy.',
+    tipsTitle: 'Good to know',
+    tips: ['Documents that are not in French or English often need a sworn translation.', 'Never submit an altered or doubtful document: a false document can lead to refusal and a lasting ban.', 'Nexora never keeps your passport.', 'Keep a digital copy of every document you file.'],
+    generated: 'Generated on nexoraservicescompany.com',
+    waText: (v: string, d: string) => `Hello Nexora, I am preparing a ${v.toLowerCase()} file for: ${d}. Could you help me check my document list?`,
+    faqTitle: 'Frequently asked questions',
+  },
+}[lang];
+const visas: Visa[] = ['work', 'study', 'visit'];
+const visaIcon: Record<Visa, string> = { work: 'briefcase', study: 'cap', visit: 'luggage' };
+const groups: Group[] = ['schengen', 'europe', 'canada', 'uae'];
+const combos = groups.flatMap((g) => visas.map((v) => ({ g, v, sections: checklist(v, g) })));
+const regionOrder = ['americas', 'gulf', 'europe'] as const;
+const first = destinations.find((d) => d.id === '276')!;
+const label = (v: Visa, d: { schengen?: boolean }) => (v === 'visit' && d.schengen ? tp.visaLabels.schengen : tp.visaLabels[v]);
+const i18n = { visaLabels: tp.visaLabels, waText: L.waText('{v}', '{d}'), whatsapp: company.whatsapp, start: startHref(lang, { d: 'travel' }) };
+---
+<Page lang={lang} page="checklist" title={L.meta.title} description={L.meta.description}>
+  <PageHero lang={lang} eyebrow={L.eyebrow} title={L.title} lede={L.lede} cta={false} size="sm" crumbs={[{ key: 'services', label: c.nav[0].label }, { key: 'travel', label: c.divisions.items[2].name }]} />
+
+  <section class="section ck-section">
+    <div class="wrap ck-grid" data-ck data-i18n={JSON.stringify(i18n)}>
+      <div class="ck-controls">
+        <label class="ck-field" for={`ck-dest-${lang}`}>{L.dest}
+          <select id={`ck-dest-${lang}`} data-ck-dest>
+            {regionOrder.map((r) => (
+              <optgroup label={tp.regions[r]}>
+                {destinations.filter((d) => d.region === r).map((d) => (
+                  <option value={d.id} data-group={groupOf(d)} data-visas={d.visas.join(' ')} data-schengen={d.schengen ? '1' : undefined} selected={d.id === first.id}>{d[lang]}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </label>
+        <fieldset class="ck-visas">
+          <legend>{L.visa}</legend>
+          {visas.map((v) => (
+            <label class="ck-visa">
+              <input type="radio" name={`ck-visa-${lang}`} value={v} checked={v === 'visit'} />
+              <span class="ck-visa-ico"><Icon name={visaIcon[v]} size={20} /></span>
+              <span class="ck-visa-txt"><b data-visa-name={v}>{label(v, first)}</b><small class="ck-na">{L.notAvailable}</small></span>
+            </label>
+          ))}
+        </fieldset>
+        <div class="ck-actions">
+          <button type="button" class="btn btn-teal" data-ck-print>{L.print}</button>
+          <a class="btn btn-wa" href={company.whatsapp} target="_blank" rel="noopener" data-ck-wa><Icon name="whatsapp" size={20} />{L.wa}</a>
+          <a class="btn btn-line" href={startHref(lang, { d: 'travel', dest: first.id })} data-ck-start>{L.start}</a>
+        </div>
+        <p class="ck-disclaimer"><Icon name="shield" size={18} /><span>{L.disclaimer}</span></p>
+      </div>
+
+      <article class="ck-paper" aria-live="polite">
+        <div class="ck-print-head"><img src="/img/logo-color.png" alt="" width="54" height="40" /><span><b>NEXORA SERVICES COMPANY LTD</b><small>{company.phone} · {company.email}</small></span></div>
+        <header class="ck-paper-head">
+          <p class="eyebrow">{L.listFor}</p>
+          <h2><span data-ck-visa-label>{label('visit', first)}</span> · <span data-ck-dest-label>{first[lang]}</span></h2>
+          <div class="ck-progress"><span class="ck-bar"><i data-ck-bar></i></span><span><b data-ck-done>0</b> / <span data-ck-total>0</span> {L.ready}</span></div>
+        </header>
+        {combos.map((k) => (
+          <div class="ck-list" data-combo={`${k.g}-${k.v}`} hidden={!(k.g === 'schengen' && k.v === 'visit')}>
+            {k.sections.map((s) => (
+              <section class="ck-sec">
+                <h3>{s.t[lang]}</h3>
+                <ul>
+                  {s.items.map((it) => (
+                    <li><label><input type="checkbox" data-item={`${s.id}.${it.id}`} /><span class="ck-box"><Icon name="check" size={14} /></span><span class="ck-txt">{it.t[lang]}{it.note && <small>{it.note[lang]}</small>}</span></label></li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        ))}
+        <aside class="ck-tips">
+          <h3>{L.tipsTitle}</h3>
+          <ul>{L.tips.map((x) => <li>{x}</li>)}</ul>
+        </aside>
+        <p class="ck-print-foot">{L.disclaimer}<br />{L.generated} · <span data-ck-date></span></p>
+      </article>
+    </div>
+  </section>
+
+  <Faq lang={lang} items={faq[lang].travel} title={L.faqTitle} soft />
+
+  <script is:inline>
+  (() => {
+    const box = document.querySelector('[data-ck]'); if (!box) return;
+    const T = JSON.parse(box.dataset.i18n);
+    const sel = box.querySelector('[data-ck-dest]'), radios = [...box.querySelectorAll('input[type=radio]')];
+    const store = { get: (k) => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+    let list;
+    const render = () => {
+      const opt = sel.selectedOptions[0], group = opt.dataset.group, visas = opt.dataset.visas.split(' '), schengen = !!opt.dataset.schengen;
+      radios.forEach((r) => { const ok = visas.includes(r.value); r.disabled = !ok; r.closest('label').classList.toggle('na', !ok); });
+      let v = (radios.find((r) => r.checked) || {}).value;
+      if (!visas.includes(v)) { v = visas[0]; radios.find((r) => r.value === v).checked = true; }
+      box.querySelector('[data-visa-name="visit"]').textContent = schengen ? T.visaLabels.schengen : T.visaLabels.visit;
+      const vLabel = v === 'visit' && schengen ? T.visaLabels.schengen : T.visaLabels[v];
+      box.querySelectorAll('.ck-list').forEach((l) => l.hidden = l.dataset.combo !== `${group}-${v}`);
+      list = box.querySelector(`[data-combo="${group}-${v}"]`);
+      box.querySelector('[data-ck-visa-label]').textContent = vLabel;
+      box.querySelector('[data-ck-dest-label]').textContent = opt.textContent;
+      const key = `nexora-ck-${opt.value}-${v}`, saved = store.get(key);
+      list.querySelectorAll('[data-item]').forEach((c) => { c.checked = saved.includes(c.dataset.item); c.onchange = () => { store.set(key, [...list.querySelectorAll('[data-item]:checked')].map((x) => x.dataset.item)); progress(); }; });
+      box.querySelector('[data-ck-wa]').href = `${T.whatsapp}?text=${encodeURIComponent(T.waText.replace('{v}', vLabel).replace('{d}', opt.textContent))}`;
+      box.querySelector('[data-ck-start]').href = `${T.start}&dest=${opt.value}&s=visa-${v}`;
+      progress();
+    };
+    const progress = () => {
+      const all = list.querySelectorAll('[data-item]').length, done = list.querySelectorAll('[data-item]:checked').length;
+      box.querySelector('[data-ck-done]').textContent = done; box.querySelector('[data-ck-total]').textContent = all;
+      box.querySelector('[data-ck-bar]').style.width = `${all ? (done / all) * 100 : 0}%`;
+    };
+    const p = new URLSearchParams(location.search);
+    if (p.get('dest') && sel.querySelector(`option[value="${p.get('dest')}"]`)) sel.value = p.get('dest');
+    if (p.get('visa')) { const r = radios.find((x) => x.value === p.get('visa')); if (r) r.checked = true; }
+    sel.addEventListener('change', render); radios.forEach((r) => r.addEventListener('change', render));
+    box.querySelector('[data-ck-print]').addEventListener('click', () => print());
+    box.querySelector('[data-ck-date]').textContent = new Date().toLocaleDateString(document.documentElement.lang, { day: 'numeric', month: 'long', year: 'numeric' });
+    render();
+  })();
+  </script>
+</Page>

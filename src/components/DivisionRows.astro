@@ -1,0 +1,31 @@
+---
+// The three divisions as alternating rows, each with its animated visual.
+import { t, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import Icon from './Icon.astro';
+import BizViz from './viz/BizViz.astro';
+import HrViz from './viz/HrViz.astro';
+import MobilityMap from './viz/MobilityMap.astro';
+interface Props { lang: Lang; prefix?: string }
+const { lang, prefix = 'row' } = Astro.props;
+const c = t[lang];
+---
+<div class="div-rows">
+  {c.divisions.items.map((d, i) => (
+    <article class:list={['div-row', { flip: i % 2 === 1 }]}>
+      <div class="div-row-visual reveal">
+        {i === 0 && <BizViz lang={lang} id={`${prefix}-biz`} />}
+        {i === 1 && <HrViz lang={lang} id={`${prefix}-hr`} />}
+        {i === 2 && <MobilityMap lang={lang} id={`${prefix}-map`} />}
+      </div>
+      <div class="div-row-body reveal" style="--d:1">
+        <span class="div-row-num">{d.tag}</span>
+        <h3>{d.name}</h3>
+        <p class="division-line">{d.line}</p>
+        <ul class="ticks">{d.points.map((p) => <li><Icon name="check" size={18} />{p}</li>)}</ul>
+        {d.note && <p class="division-note">{d.note}</p>}
+        <a class="btn btn-navy" href={href(lang, d.key)}>{c.divisions.more} · {d.name}<Icon name="arrow" size={18} /></a>
+      </div>
+    </article>
+  ))}
+</div>

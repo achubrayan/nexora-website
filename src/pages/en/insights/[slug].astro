@@ -1,0 +1,7 @@
+---
+import Page from '../../../views/Article.astro';
+import { articles } from '../../../i18n/insights';
+export const getStaticPaths = () => articles.map((article) => ({ params: { slug: article.slug.en }, props: { article } }));
+const { article } = Astro.props;
+---
+<Page lang="en" article={article} />

@@ -1,0 +1,68 @@
+---
+// Insights hub: free tools and practical guides.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { t, type Lang } from '../i18n/content';
+import { href, startHref } from '../i18n/routes';
+import { articles } from '../i18n/insights';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const L = {
+  fr: {
+    meta: { title: 'Ressources · Guides et outils pratiques · Nexora Services Company Ltd', description: 'Guides pratiques et outils gratuits de Nexora : systèmes de gestion pour PME, bases RH, dossiers de visa et liste des documents à préparer.' },
+    eyebrow: 'Ressources', title: 'Des guides pratiques et des outils gratuits.', lede: 'Ce que nous appliquons chez nos clients, expliqué simplement : pour structurer une entreprise, poser des bases RH solides ou préparer un dossier de voyage.',
+    toolsTitle: 'Outils gratuits', guidesTitle: 'Guides pratiques', read: 'Lire le guide', min: 'min de lecture', open: 'Ouvrir',
+    tools: [
+      { icon: 'check', name: 'Liste des documents visa', text: 'Choisissez un pays et un type de visa : la liste indicative des pièces à préparer, à cocher et à enregistrer en PDF.', to: 'checklist' },
+      { icon: 'compass', name: 'Démarrer une demande', text: 'Quatre questions pour décrire votre besoin et l’envoyer à la bonne personne, par WhatsApp ou par formulaire.', to: 'start' },
+    ],
+  },
+  en: {
+    meta: { title: 'Insights · Practical guides and tools · Nexora Services Company Ltd', description: 'Practical guides and free tools from Nexora: management systems for SMEs, HR foundations, visa files and the list of documents to prepare.' },
+    eyebrow: 'Insights', title: 'Practical guides and free tools.', lede: 'What we apply with our clients, explained simply: to structure a business, lay solid HR foundations or prepare a travel file.',
+    toolsTitle: 'Free tools', guidesTitle: 'Practical guides', read: 'Read the guide', min: 'min read', open: 'Open',
+    tools: [
+      { icon: 'check', name: 'Visa document checklist', text: 'Choose a country and a visa type: the indicative list of documents to prepare, tick off and save as a PDF.', to: 'checklist' },
+      { icon: 'compass', name: 'Start a request', text: 'Four questions to describe your need and send it to the right person, by WhatsApp or through the form.', to: 'start' },
+    ],
+  },
+}[lang];
+const base = href(lang, 'insights');
+const fmt = (d: string) => new Date(d).toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Page lang={lang} page="insights" title={L.meta.title} description={L.meta.description}>
+  <PageHero lang={lang} eyebrow={L.eyebrow} title={L.title} lede={L.lede} cta={false} size="sm" />
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{L.toolsTitle}</p></header>
+      <div class="tools">
+        {L.tools.map((x, i) => (
+          <a class="tool reveal" style={`--d:${i}`} href={x.to === 'start' ? startHref(lang) : href(lang, 'checklist')}>
+            <span class="tool-ico"><Icon name={x.icon} size={26} /></span>
+            <h3>{x.name}</h3><p>{x.text}</p>
+            <span class="offer-cta">{L.open}<Icon name="arrow" size={18} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{L.guidesTitle}</p></header>
+      <div class="guides">
+        {articles.map((a, i) => (
+          <a class={`guide reveal guide-${a.division}`} style={`--d:${i}`} href={`${base}${a.slug[lang]}/`}>
+            <span class="guide-top"><span class="guide-cat">{a.category[lang]}</span><span class="guide-meta">{a.minutes} {L.min}</span></span>
+            <h3>{a.title[lang]}</h3>
+            <p>{a.excerpt[lang]}</p>
+            <span class="guide-foot"><time datetime={a.date}>{fmt(a.date)}</time><span class="offer-cta">{L.read}<Icon name="arrow" size={18} /></span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

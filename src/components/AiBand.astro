@@ -1,0 +1,23 @@
+---
+import { t, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; details?: string[]; link?: boolean }
+const { lang, details, link = false } = Astro.props;
+const c = t[lang];
+---
+<section class="section ai">
+  <div class="ai-bg" aria-hidden="true"><img src="/img/visuals/ai.webp" alt="" width="1200" height="675" loading="lazy" /></div>
+  <div class="wrap ai-grid">
+    <div class="reveal">
+      <p class="eyebrow eyebrow-teal">{c.ai.eyebrow}</p>
+      <h2>{c.ai.title}</h2>
+      <p class="ai-body">{c.ai.body}</p>
+      {link && <a class="more more-light" href={href(lang, 'approach')}>{c.method.eyebrow}<Icon name="arrow" size={18} /></a>}
+    </div>
+    <div class="principles reveal">
+      <p class="principles-title">{c.ai.principlesTitle}</p>
+      <ol class:list={{ detailed: !!details }}>{c.ai.principles.map((p, i) => <li><span>{String(i + 1).padStart(2, '0')}</span><div><b>{p}</b>{details && <small>{details[i]}</small>}</div></li>)}</ol>
+    </div>
+  </div>
+</section>

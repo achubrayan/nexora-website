@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { pt } from '../i18n/pages';
+const fr = pt.fr.notFound, en = pt.en.notFound;
+---
+<Base lang="fr" page="home" title="404 · Nexora Services Company Ltd" description={fr.text}>
+  <main class="nf">
+    <img src="/img/logo-white.png" alt="Nexora" width="64" height="47" />
+    <p class="nf-code">404</p>
+    <h1>{fr.title} · <span lang="en">{en.title}</span></h1>
+    <p>{fr.text} <span lang="en">{en.text}</span></p>
+    <div class="hero-ctas"><a class="btn btn-teal" href="/fr/">{fr.back}</a><a class="btn btn-ghost" href="/en/" lang="en">{en.back}</a></div>
+  </main>
+</Base>

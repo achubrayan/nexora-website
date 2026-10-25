@@ -1,0 +1,44 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import BizViz from '../components/viz/BizViz.astro';
+import CardGrid from '../components/CardGrid.astro';
+import Offers from '../components/Offers.astro';
+import AiBand from '../components/AiBand.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Faq from '../components/Faq.astro';
+import { faq } from '../i18n/faq';
+import Icon from '../components/Icon.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].business;
+---
+<Page lang={lang} page="business" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede} crumbs={[{ key: 'services', label: c.nav[0].label }]} d="business">
+    <BizViz lang={lang} id="hero-biz" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.areasEyebrow}</p><h2>{p.areasTitle}</h2></header>
+      <CardGrid items={p.areas} cols={4} />
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap split-2">
+      <header class="section-head reveal"><p class="eyebrow">{p.deliverablesEyebrow}</p><h2>{p.deliverablesTitle}</h2></header>
+      <ol class="deliverables">
+        {p.deliverables.map((d, i) => <li class="reveal" style={`--d:${i}`}><span>{String(i + 1).padStart(2, '0')}</span>{d}<Icon name="check" size={20} /></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <Offers lang={lang} title={p.offersTitle} />
+  <AiBand lang={lang} details={pt[lang].approach.aiDetails} link />
+  <Faq lang={lang} items={faq[lang].business} />
+  <CtaBand lang={lang} title={pt[lang].services.start[0].name} text={pt[lang].services.start[0].text} d="business" />
+</Page>

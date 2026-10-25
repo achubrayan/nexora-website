@@ -1,0 +1,56 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Steps from '../components/Steps.astro';
+import CardGrid from '../components/CardGrid.astro';
+import AiBand from '../components/AiBand.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].approach;
+const s = pt[lang].services;
+---
+<Page lang={lang} page="approach" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede}>
+    <img class="hero-3d" src="/img/visuals/ai.webp" alt="" width="1200" height="675" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{c.method.eyebrow}</p><h2>{c.method.title}</h2></header>
+      <Steps lang={lang} />
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.journeyEyebrow}</p><h2>{p.journeyTitle}</h2></header>
+      <div class="journey-wrap" data-steps>
+        <span class="journey-line" aria-hidden="true"><span></span></span>
+        <ol class="journey">
+          {p.journey.map((j, i) => <li class="reveal" style={`--d:${i % 3}`}><span>{String(i + 1).padStart(2, '0')}</span>{j}</li>)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.qualityEyebrow}</p><h2>{p.qualityTitle}</h2></header>
+      <CardGrid items={p.quality} />
+    </div>
+  </section>
+
+  <AiBand lang={lang} details={p.aiDetails} />
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{s.modelsEyebrow}</p><h2>{s.modelsTitle}</h2></header>
+      <CardGrid items={s.models} />
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

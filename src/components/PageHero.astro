@@ -1,0 +1,26 @@
+---
+// Dark hero for inner pages, with breadcrumbs and an optional visual on the right.
+import { t, type Lang } from '../i18n/content';
+import { href, startHref, type PageKey } from '../i18n/routes';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; eyebrow: string; title: string; lede?: string; crumbs?: { key: PageKey; label: string }[]; cta?: boolean; size?: 'lg' | 'sm'; d?: string }
+const { lang, eyebrow, title, lede, crumbs = [], cta = true, size = 'lg', d } = Astro.props;
+const c = t[lang];
+const hasVisual = Astro.slots.has('default');
+---
+<section class:list={['page-hero', `page-hero-${size}`, { 'has-visual': hasVisual }]}>
+  <div class="hero-bg" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="grid-lines"></span></div>
+  <div class="wrap page-hero-grid">
+    <div class="page-hero-copy">
+      <nav class="crumbs" aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}>
+        <a href={href(lang, 'home')}>{c.home}</a>
+        {crumbs.map((cr) => <><span aria-hidden="true">/</span><a href={href(lang, cr.key)}>{cr.label}</a></>)}
+      </nav>
+      <p class="badge"><span class="dot"></span>{eyebrow}</p>
+      <h1>{title}</h1>
+      {lede && <p class="hero-lede">{lede}</p>}
+      {cta && <div class="hero-ctas"><a class="btn btn-teal btn-lg" href={startHref(lang, { d })}>{c.cta}<Icon name="arrow" size={18} /></a></div>}
+    </div>
+    {hasVisual && <div class="page-hero-visual"><slot /></div>}
+  </div>
+</section>

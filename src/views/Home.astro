@@ -1,0 +1,109 @@
+---
+// Homepage: a short overview that sends visitors to the detailed pages.
+import Page from '../layouts/Page.astro';
+import Icon from '../components/Icon.astro';
+import RelationViz from '../components/viz/RelationViz.astro';
+import DivisionRows from '../components/DivisionRows.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { t, type Lang } from '../i18n/content';
+import { href, startHref } from '../i18n/routes';
+import { desk } from '../i18n/desk';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const words = c.statement.text.split(' ');
+const D = desk[lang];
+const H = {
+  fr: { relTitle: 'Trois divisions, une seule relation', relLede: 'Chaque client travaille avec un seul responsable Nexora, qui mobilise la ou les divisions utiles : un périmètre, un interlocuteur, un niveau d’exigence.', discover: 'Découvrir', methodTitle: 'Une méthode en cinq étapes', methodLink: 'Voir notre approche', exploreTitle: 'Aller plus loin', explore: [{ key: 'clients', name: 'Nos clients', text: 'PME, startups, ONG, entreprises, institutions et professionnels : les besoins et les points de départ.' }, { key: 'about', name: 'À propos', text: 'Notre raison d’être, nos valeurs, notre direction et nos bureaux de Douala et Nkongsamba.' }, { key: 'approach', name: 'IA responsable', text: 'Huit principes appliqués à chaque livrable assisté par l’intelligence artificielle.' }] },
+  en: { relTitle: 'Three divisions, one relationship', relLede: 'Every client works with a single Nexora lead, who brings in the divisions needed: one scope, one point of contact, one standard of quality.', discover: 'Discover', methodTitle: 'A five-step method', methodLink: 'See our approach', exploreTitle: 'Go further', explore: [{ key: 'clients', name: 'Who we serve', text: 'SMEs, startups, NGOs, corporations, institutions and professionals: their needs and where to start.' }, { key: 'about', name: 'About Nexora', text: 'Our purpose, values, leadership and our offices in Douala and Nkongsamba.' }, { key: 'approach', name: 'Responsible AI', text: 'Eight principles applied to every AI-assisted deliverable.' }] },
+}[lang];
+---
+<Page lang={lang} page="home" title={c.meta.title} description={c.meta.description} preload="/img/visuals/hero.webp">
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span><span class="grid-lines"></span></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="badge"><span class="dot"></span>{c.hero.badge}</p>
+        <h1>{c.hero.title.map((line, i) => <span class:list={['line', { accent: c.hero.accent.includes(i) }]} style={`--d:${i}`}>{line}</span>)}</h1>
+        <p class="hero-lede">{c.hero.lede}</p>
+        <div class="hero-ctas">
+          <a class="btn btn-teal btn-lg" href={startHref(lang)}>{c.cta}<Icon name="arrow" size={18} /></a>
+          <a class="btn btn-ghost btn-lg" href={href(lang, 'services')}>{c.hero.secondary}</a>
+        </div>
+      </div>
+      <div class="hero-visual"><img src="/img/visuals/hero.webp" alt="" width="1000" height="739" fetchpriority="high" /></div>
+    </div>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">{[0, 1].map(() => c.hero.ticker.map((x) => <span>{x}<i></i></span>))}</div>
+    </div>
+  </section>
+
+  <section class="section statement">
+    <div class="wrap statement-grid">
+      <p class="eyebrow">{c.statement.eyebrow}</p>
+      <p class="statement-text" data-words>{words.map((w) => <span>{w} </span>)}</p>
+      <div class="statement-side">
+        <p class="statement-body">{c.statement.body}</p>
+        <dl class="facts" data-counts>
+          {c.statement.facts.map((f) => <div class="fact"><dt><span data-count={+f.n} data-pre="0">{f.n}</span></dt><dd>{f.l}</dd></div>)}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head split reveal">
+        <div><p class="eyebrow">{c.divisions.eyebrow}</p><h2>{H.relTitle}</h2></div>
+        <p class="lede">{H.relLede}</p>
+      </header>
+      <div class="reveal"><RelationViz lang={lang} /></div>
+      <div class="home-divisions"><DivisionRows lang={lang} prefix="home" /></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head split reveal">
+        <div><p class="eyebrow">{c.method.eyebrow}</p><h2>{H.methodTitle}</h2></div>
+        <div class="head-side"><p class="lede">{c.method.lede}</p><a class="more" href={href(lang, 'approach')}>{H.methodLink}<Icon name="arrow" size={18} /></a></div>
+      </header>
+      <div class="strip-wrap" data-steps>
+        <span class="strip-line" aria-hidden="true"><span></span></span>
+        <ol class="strip">
+          {c.method.steps.map((s, i) => <li class="reveal" style={`--d:${i}`}><span>{String(i + 1).padStart(2, '0')}</span><b>{s.name}</b></li>)}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-navy desk-teaser">
+    <div class="wrap desk-teaser-grid">
+      <div class="reveal">
+        <p class="eyebrow eyebrow-teal">{D.eyebrow}</p>
+        <h2>{D.home.title}</h2>
+        <p class="lede">{D.home.text}</p>
+        <a class="btn btn-teal" href={href(lang, 'desk')}>{D.home.link}<Icon name="arrow" size={18} /></a>
+      </div>
+      <ul class="desk-chips">
+        {D.services.map((s, i) => <li class="reveal" style={`--d:${i % 4}`}><a href={`${href(lang, 'desk')}#${s.id}`}><Icon name={s.icon} size={20} /><span>{s.name}</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><h2>{H.exploreTitle}</h2></header>
+      <div class="starts">
+        {H.explore.map((x, i) => (
+          <a class="start reveal" style={`--d:${i}`} href={href(lang, x.key as any)}>
+            <h3>{x.name}</h3><p>{x.text}</p>
+            <span class="more">{H.discover}<Icon name="arrow" size={18} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Page>

@@ -1,0 +1,14 @@
+---
+// Clickable email, WhatsApp and phone links, in a row or as a stack of cards.
+import { company, t, type Lang } from '../i18n/content';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; variant?: 'bar' | 'cards' | 'footer' }
+const { lang, variant = 'bar' } = Astro.props;
+const c = t[lang];
+const wa = `${company.whatsapp}?text=${encodeURIComponent(c.waText)}`;
+---
+<div class={`clinks clinks-${variant}`}>
+  <a class="clink clink-mail" href={`mailto:${company.email}`}><span class="clink-ico"><Icon name="mail" size={18} /></span><span class="clink-txt"><small>{c.contact.emailLabel}</small>{company.email}</span></a>
+  <a class="clink clink-wa" href={wa} target="_blank" rel="noopener"><span class="clink-ico"><Icon name="whatsapp" size={18} /></span><span class="clink-txt"><small>WhatsApp</small>{company.phone}</span></a>
+  {variant !== 'bar' && <a class="clink clink-tel" href={company.tel}><span class="clink-ico"><Icon name="phone" size={18} /></span><span class="clink-txt"><small>{c.call}</small>{company.phone}</span></a>}
+</div>

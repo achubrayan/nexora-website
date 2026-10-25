@@ -1,0 +1,63 @@
+---
+// Animated dot-matrix map of the international mobility destinations, routed from Douala. Built at compile time.
+import type { Lang } from '../../i18n/content';
+import { buildMap, destinations } from '../../lib/mobility';
+interface Props { lang: Lang; id?: string }
+const { lang, id = 'map' } = Astro.props;
+const europe = destinations.filter((d) => !d.label).length;
+const L = {
+  fr: { title: 'Destinations et assistance visa', dest: 'destinations', europe: `Europe · ${europe} pays`, hub: 'Douala', home: 'Point de départ', target: 'Pays de destination', aria: `Carte animée : départs de Douala vers ${destinations.length} pays, le Canada, les Émirats arabes unis et ${europe} pays d'Europe.` },
+  en: { title: 'Destinations and visa support', dest: 'destinations', europe: `Europe · ${europe} countries`, hub: 'Douala', home: 'Departure point', target: 'Destination country', aria: `Animated map: routes from Douala to ${destinations.length} countries, Canada, the United Arab Emirates and ${europe} European countries.` },
+}[lang];
+const map = buildMap();
+const [hx, hy] = map.hub;
+const eu = map.arcs.filter((a) => !a.label);
+const euTop = Math.min(...eu.map((a) => a.y)), euLeft = Math.min(...eu.map((a) => a.x)), euRight = Math.max(...eu.map((a) => a.x));
+const named = map.arcs.filter((a) => a.label);
+---
+<svg id={`${id}-svg`} class="viz viz-map" data-viz viewBox="0 0 560 420" role="img" aria-label={L.aria} xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3168" /><stop offset="1" stop-color="#000f26" /></linearGradient>
+    <linearGradient id={`${id}-arc`} gradientUnits="userSpaceOnUse" x1={hx} y1={hy} x2={hx} y2="60"><stop offset="0" stop-color="#3fd0cd" /><stop offset="1" stop-color="#7fc3ff" /></linearGradient>
+    <radialGradient id={`${id}-glow`}><stop offset="0" stop-color="#3fd0cd" stop-opacity=".55" /><stop offset="1" stop-color="#3fd0cd" stop-opacity="0" /></radialGradient>
+  </defs>
+  <rect class="v-frame" width="560" height="420" rx="22" fill={`url(#${id}-bg)`} />
+  <g class="v-top">
+    <circle cx="26" cy="26" r="4" /><circle cx="40" cy="26" r="4" /><circle cx="54" cy="26" r="4" />
+    <text x="74" y="31" class="v-title">{L.title}</text>
+    <rect x="420" y="13" width="122" height="26" rx="13" class="v-pill" />
+    <text x="481" y="30.5" text-anchor="middle" class="v-pill-t"><tspan data-count={destinations.length}>{destinations.length}</tspan> {L.dest}</text>
+  </g>
+  <path d={map.base} class="m-land" />
+  <path d={map.dest} class="m-dest" />
+  <path d={map.home} class="m-home" />
+  <circle cx={hx} cy={hy} r="38" fill={`url(#${id}-glow)`} class="m-glow" />
+  {map.arcs.map((a) => (
+    <path d={a.path} class="m-arc" pathLength="1" data-dest={a.id} style={`--i:${a.i}`} stroke={`url(#${id}-arc)`} />
+  ))}
+  {map.arcs.map((a) => (
+    <circle r="2.4" class="m-mover" data-dest={a.id}>
+      <animateMotion dur={`${(2.8 + (a.i % 5) * 0.45).toFixed(2)}s`} begin={`-${(a.i * 0.37).toFixed(2)}s`} repeatCount="indefinite" path={a.path} />
+    </circle>
+  ))}
+  {map.arcs.map((a) => (
+    <g class="m-pin" data-dest={a.id} style={`--i:${a.i}`}>
+      <circle cx={a.x} cy={a.y} r="7" class="m-pulse" />
+      <circle cx={a.x} cy={a.y} r="3" class="m-city" />
+    </g>
+  ))}
+  <g class="m-hub">
+    <circle cx={hx} cy={hy} r="12" class="m-pulse m-pulse-hub" />
+    <circle cx={hx} cy={hy} r="5" class="m-hub-dot" />
+    <text x={hx + 12} y={hy + 20} class="v-label v-strong">{L.hub}</text>
+  </g>
+  {named.map((a) => (
+    <text x={a.x} y={a.y - 12} text-anchor="middle" class="m-name">{lang === 'fr' ? (a.id === '784' ? 'EAU' : a.fr) : (a.id === '784' ? 'UAE' : a.en)}</text>
+  ))}
+  <text x={(euLeft + euRight) / 2} y={euTop - 14} text-anchor="middle" class="m-name">{L.europe}</text>
+  <g transform="translate(24 360)" class="m-legend">
+    <rect width="176" height="44" rx="10" class="v-card" />
+    <circle cx="16" cy="15" r="4" class="m-hub-dot" /><text x="28" y="19" class="v-small">{L.home}</text>
+    <circle cx="16" cy="31" r="3.5" class="m-city" /><text x="28" y="35" class="v-small">{L.target}</text>
+  </g>
+</svg>

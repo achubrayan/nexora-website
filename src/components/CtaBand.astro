@@ -1,0 +1,22 @@
+---
+import { t, type Lang } from '../i18n/content';
+import { startHref } from '../i18n/routes';
+import Icon from './Icon.astro';
+import { company } from '../i18n/content';
+interface Props { lang: Lang; title?: string; text?: string; d?: string }
+const { lang } = Astro.props;
+const c = t[lang];
+const title = Astro.props.title ?? c.band.title;
+const text = Astro.props.text ?? c.band.text;
+---
+<section class="band">
+  <div class="band-bg" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span></div>
+  <div class="wrap band-inner reveal">
+    <h2>{title}</h2>
+    <p>{text}</p>
+    <div class="hero-ctas">
+      <a class="btn btn-teal btn-lg" href={startHref(lang, { d: Astro.props.d })}>{c.cta}<Icon name="arrow" size={18} /></a>
+      <a class="btn btn-wa btn-lg" href={`${company.whatsapp}?text=${encodeURIComponent(c.waText)}`} target="_blank" rel="noopener"><Icon name="whatsapp" size={20} />{c.chat}</a>
+    </div>
+  </div>
+</section>

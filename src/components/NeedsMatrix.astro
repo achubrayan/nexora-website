@@ -1,0 +1,38 @@
+---
+// Typical needs by client type (indicative), drawn from the client profiles. Not statistics.
+import { t, type Lang } from '../i18n/content';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const L = {
+  fr: { caption: 'Besoins typiques par type de client (indicatif)', client: 'Client', cols: [['Stratégie et diagnostic', 'Procédures et contrôle', 'Tableaux de bord et KPI', 'Digital et IA'], ['Politiques et systèmes RH', 'Service RH externalisé', 'Formation'], ['Voyages et réservations', 'Assistance visa']], typical: 'Besoin typique' },
+  en: { caption: 'Typical needs by client type (indicative)', client: 'Client', cols: [['Strategy & diagnostics', 'SOPs & controls', 'Dashboards & KPIs', 'Digital & AI'], ['HR policies & systems', 'Outsourced HR desk', 'Training'], ['Travel & bookings', 'Visa assistance']], typical: 'Typical need' },
+}[lang];
+const groups = c.divisions.items.map((d, i) => ({ name: d.name, cols: L.cols[i], cls: ['g-b', 'g-h', 'g-t'][i] }));
+const grid = [
+  [1, 1, 1, 1, 1, 1, 1, 0, 0],
+  [1, 1, 0, 1, 1, 1, 0, 0, 0],
+  [0, 1, 1, 0, 1, 0, 1, 0, 0],
+  [0, 1, 1, 1, 0, 0, 1, 1, 0],
+  [1, 1, 0, 1, 0, 0, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 1, 1],
+];
+const colCls = groups.flatMap((g) => g.cols.map(() => g.cls));
+---
+<div class="matrix-wrap reveal" data-viz>
+  <table class="matrix">
+    <caption>{L.caption}</caption>
+    <thead>
+      <tr><th rowspan="2" scope="col" class="m-corner">{L.client}</th>{groups.map((g) => <th colspan={g.cols.length} scope="colgroup" class={`m-group ${g.cls}`}>{g.name}</th>)}</tr>
+      <tr>{groups.flatMap((g) => g.cols.map((col) => <th scope="col" class={`m-col ${g.cls}`}><span>{col}</span></th>))}</tr>
+    </thead>
+    <tbody>
+      {c.clients.items.map((s, r) => (
+        <tr>
+          <th scope="row">{s.name}</th>
+          {grid[r].map((v, j) => <td class={colCls[j]}>{v ? <span class="m-dot" style={`--i:${r * 3 + j}`} title={L.typical}><span class="sr">{L.typical}</span></span> : <span class="m-none" aria-hidden="true"></span>}</td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

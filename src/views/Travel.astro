@@ -1,0 +1,127 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import MobilityMap from '../components/viz/MobilityMap.astro';
+import CardGrid from '../components/CardGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Faq from '../components/Faq.astro';
+import { faq } from '../i18n/faq';
+import Icon from '../components/Icon.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+import { href, startHref } from '../i18n/routes';
+import { destinations, type Region, type Visa } from '../lib/mobility';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].travel;
+const regions: Region[] = ['americas', 'gulf', 'europe'];
+const bookingKey = ['flight', 'hotel', 'tour'];
+const ask = lang === 'fr' ? { book: 'Faire une demande', file: 'Préparer ma demande', ckTitle: 'Générez votre liste de documents', ckText: 'Choisissez un pays et un type de visa : la liste indicative des pièces à préparer, à cocher et à enregistrer en PDF.', ckCta: 'Ouvrir l’outil' } : { book: 'Request a booking', file: 'Start my request', ckTitle: 'Generate your document checklist', ckText: 'Choose a country and a visa type: the indicative list of documents to prepare, tick off and save as a PDF.', ckCta: 'Open the tool' };
+const visaIcon: Record<Visa, string> = { work: 'briefcase', study: 'cap', visit: 'luggage' };
+---
+<Page lang={lang} page="travel" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede} crumbs={[{ key: 'services', label: c.nav[0].label }]} d="travel">
+    <img class="hero-3d" src="/img/visuals/travel.webp" alt="" width="900" height="675" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.bookingsEyebrow}</p><h2>{p.bookingsTitle}</h2></header>
+      <div class="bookings">
+        {p.bookings.map((b, i) => (
+          <article class="booking reveal" style={`--d:${i}`}>
+            <span class="booking-ico"><Icon name={b.icon} size={28} /></span>
+            <h3>{b.name}</h3>
+            <p>{b.text}</p>
+            <ul class="ticks">{b.points.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>
+            <a class="booking-cta" href={startHref(lang, { d: 'travel', s: bookingKey[i] })}>{ask.book}<Icon name="arrow" size={16} /></a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.deskEyebrow}</p><h2>{p.deskTitle}</h2></header>
+      <CardGrid items={p.desk} />
+    </div>
+  </section>
+
+  <section class="section section-navy mobility" id="destinations">
+    <div class="wrap">
+      <header class="section-head split reveal">
+        <div><p class="eyebrow eyebrow-teal">{p.destEyebrow}</p><h2>{p.destTitle}</h2></div>
+        <p class="lede lede-light">{p.destLede}</p>
+      </header>
+      <div class="filters reveal" role="group" aria-label={p.destEyebrow} data-filters="#dest-list">
+        {(['all', 'work', 'study', 'visit'] as const).map((f, i) => (
+          <button type="button" class="filter" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}>{f !== 'all' && <Icon name={visaIcon[f]} size={16} />}{p.filters[f]}</button>
+        ))}
+        <span class="filter-hint">{p.hint}</span>
+      </div>
+      <div class="mobility-grid">
+        <div class="mobility-map reveal"><MobilityMap lang={lang} id="travel-map" /></div>
+        <div class="regions-sum reveal">
+          {regions.map((r) => {
+            const list = destinations.filter((d) => d.region === r);
+            const visas = (['work', 'study', 'visit'] as Visa[]).filter((v) => list.some((d) => d.visas.includes(v)));
+            return (
+              <div class="region">
+                <p class="dest-region">{p.regions[r]}</p>
+                <p class="region-names">{list.map((d) => d[lang]).join(' · ')}</p>
+                <span class="chips chips-start">{visas.map((v) => <span class={`chip chip-${v}`}><Icon name={visaIcon[v]} size={14} />{r === 'europe' && v === 'visit' ? p.visaLabels.schengen : p.visaLabels[v]}</span>)}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <ul class="dest-cards" id="dest-list" data-dest-list="#travel-map-svg">
+        {destinations.map((d, i) => (
+          <li class="dest-card reveal" tabindex="0" data-dest={d.id} data-visas={d.visas.join(' ')} style={`--d:${i % 4}`}>
+            <span class="dest-card-top"><b>{d[lang]}</b><small>{p.regions[d.region]}{d.region === 'europe' && ` · ${d.schengen ? p.schengen : p.nonSchengen}`}</small></span>
+            {d.programme && <span class="dest-prog">{d.programme[lang]}</span>}
+            <span class="chips chips-start">
+              {d.visas.map((v) => <span class={`chip chip-${v}`}><Icon name={visaIcon[v]} size={14} />{v === 'visit' && d.schengen ? 'Schengen' : p.filters[v]}</span>)}
+            </span>
+            <a class="dest-cta" href={startHref(lang, { d: 'travel', dest: d.id })} tabindex="-1">{ask.file}<Icon name="arrow" size={14} /></a>
+          </li>
+        ))}
+      </ul>
+      <h3 class="visa-types-title reveal">{p.visaTypesTitle}</h3>
+      <div class="visa-types">
+        {p.visaTypes.map((v, i) => (
+          <div class="visa-type reveal" style={`--d:${i}`}><span class="booking-ico"><Icon name={v.icon} size={24} /></span><h3>{v.name}</h3><p>{v.text}</p></div>
+        ))}
+      </div>
+      <p class="mobility-note reveal">{p.note}</p>
+      <div class="ready reveal">
+        <h3>{p.readyTitle}</h3>
+        <ul class="ticks">{p.ready.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul>
+      </div>
+      <a class="ck-promo reveal" href={href(lang, 'checklist')}>
+        <span class="ck-promo-ico"><Icon name="check" size={26} /></span>
+        <span class="ck-promo-txt"><b>{ask.ckTitle}</b><small>{ask.ckText}</small></span>
+        <span class="btn btn-teal btn-sm">{ask.ckCta}<Icon name="arrow" size={16} /></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.visaEyebrow}</p><h2>{p.visaTitle}</h2></header>
+      <div class="dodont">
+        <div class="do reveal"><h3>{p.do.title}</h3><ul>{p.do.items.map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul></div>
+        <div class="dont reveal" style="--d:1"><h3>{p.dont.title}</h3><ul>{p.dont.items.map((x) => <li><span class="x" aria-hidden="true">×</span>{x}</li>)}</ul></div>
+      </div>
+      <div class="promise reveal">
+        <span class="why-icon"><Icon name="shield" /></span>
+        <div><h3>{c.why.promiseTitle}</h3><p>{c.why.promise}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <Faq lang={lang} items={faq[lang].travel} />
+  <CtaBand lang={lang} title={pt[lang].services.start[2].name} text={pt[lang].services.start[2].text} d="travel" />
+</Page>

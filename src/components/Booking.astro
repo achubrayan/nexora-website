@@ -1,0 +1,17 @@
+---
+// Book a first consultation: the online booking page when one is set, otherwise a prefilled WhatsApp message.
+import { company, type Lang } from '../i18n/content';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; tone?: 'light' | 'dark' }
+const { lang, tone = 'light' } = Astro.props;
+const L = {
+  fr: { title: 'Réserver une première consultation', text: 'Un premier échange pour comprendre votre situation et vos objectifs, au bureau, par téléphone ou en visio.', cta: 'Choisir un créneau', wa: 'Bonjour Nexora, je souhaite réserver une première consultation. Mes disponibilités : ' },
+  en: { title: 'Book a first consultation', text: 'A first conversation to understand your situation and goals, at our office, by phone or by video call.', cta: 'Choose a time', wa: 'Hello Nexora, I would like to book a first consultation. My availability: ' },
+}[lang];
+const url = company.booking || `${company.whatsapp}?text=${encodeURIComponent(L.wa)}`;
+---
+<div class:list={['booking-card', `booking-${tone}`]}>
+  <span class="booking-card-ico"><Icon name="calendar" size={22} /></span>
+  <div><b>{L.title}</b><p>{L.text}</p></div>
+  <a class:list={['btn btn-sm', company.booking ? 'btn-teal' : 'btn-wa']} href={url} target="_blank" rel="noopener">{!company.booking && <Icon name="whatsapp" size={18} />}{L.cta}</a>
+</div>

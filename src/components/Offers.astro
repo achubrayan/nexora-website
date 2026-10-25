@@ -1,0 +1,27 @@
+---
+import { t, type Lang } from '../i18n/content';
+import { startHref } from '../i18n/routes';
+import Icon from './Icon.astro';
+interface Props { lang: Lang; title?: string }
+const { lang } = Astro.props;
+const c = t[lang];
+const pre = ['health-check', 'sop', 'digital', 'retainer'];
+---
+<section class="section section-navy offers-section">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="eyebrow eyebrow-teal">{c.offers.eyebrow}</p>
+      <h2>{Astro.props.title ?? c.offers.title}</h2>
+    </header>
+    <div class="offers">
+      {c.offers.items.map((o, i) => (
+        <a class="offer reveal" href={startHref(lang, { d: 'business', s: pre[i] })} style={`--d:${i}`}>
+          <span class="offer-num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{o.name}</h3>
+          <p>{o.text}</p>
+          <span class="offer-cta">{c.offers.start}<Icon name="arrow" size={18} /></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

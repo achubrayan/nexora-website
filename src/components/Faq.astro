@@ -1,0 +1,29 @@
+---
+// Questions and answers as an accordion, with FAQPage data for search engines and a booking card.
+import type { Lang } from '../i18n/content';
+import type { Qa } from '../i18n/faq';
+import Booking from './Booking.astro';
+interface Props { lang: Lang; items: Qa[]; title?: string; soft?: boolean }
+const { lang, items, soft } = Astro.props;
+const L = { fr: { eyebrow: 'FAQ', title: 'Questions fréquentes', more: 'Une autre question ? Écrivez-nous ou réservez un premier échange.' }, en: { eyebrow: 'FAQ', title: 'Frequently asked questions', more: 'Another question? Write to us or book a first conversation.' } }[lang];
+const schema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a } })) };
+---
+<section class:list={['section faq-section', { 'section-soft': soft }]}>
+  <div class="wrap faq-grid">
+    <header class="section-head reveal">
+      <p class="eyebrow">{L.eyebrow}</p>
+      <h2>{Astro.props.title ?? L.title}</h2>
+      <p class="lede">{L.more}</p>
+      <Booking lang={lang} />
+    </header>
+    <div class="faq reveal">
+      {items.map((x, i) => (
+        <details class="faq-item" open={i === 0}>
+          <summary><span>{x.q}</span><i aria-hidden="true"></i></summary>
+          <p>{x.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>

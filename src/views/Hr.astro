@@ -1,0 +1,52 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import HrViz from '../components/viz/HrViz.astro';
+import CardGrid from '../components/CardGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Faq from '../components/Faq.astro';
+import { faq } from '../i18n/faq';
+import Icon from '../components/Icon.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+import { href, startHref } from '../i18n/routes';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].hr;
+---
+<Page lang={lang} page="hr" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede} crumbs={[{ key: 'services', label: c.nav[0].label }]} d="hr">
+    <HrViz lang={lang} id="hero-hr" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap featured reveal">
+      <div class="featured-copy">
+        <p class="eyebrow eyebrow-teal">{p.featured.kicker}</p>
+        <h2>{p.featured.name}</h2>
+        <p>{p.featured.text}</p>
+        <a class="btn btn-teal" href={startHref(lang, { d: 'hr', s: 'hr-desk' })}>{c.cta}<Icon name="arrow" size={18} /></a>
+      </div>
+      <ul class="featured-list">{p.featured.points.map((x, i) => <li><span>{String(i + 1).padStart(2, '0')}</span>{x}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.areasEyebrow}</p><h2>{p.areasTitle}</h2></header>
+      <CardGrid items={p.areas} cols={4} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap quote reveal">
+      <p class="eyebrow">{p.philosophyKicker}</p>
+      <blockquote>{p.philosophy}</blockquote>
+      <p class="lede">{p.philosophyText}</p>
+    </div>
+  </section>
+
+  <Faq lang={lang} items={faq[lang].hr} />
+  <CtaBand lang={lang} title={pt[lang].services.start[1].name} text={pt[lang].services.start[1].text} d="hr" />
+</Page>

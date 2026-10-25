@@ -1,0 +1,108 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/manrope';
+import '../styles/global.css';
+import { company, t, type Lang } from '../i18n/content';
+import { st } from '../i18n/start';
+import { routes, type PageKey, type Paths } from '../i18n/routes';
+
+interface Props {
+  lang: Lang;
+  page: PageKey;
+  title: string;
+  description: string;
+  preload?: string;
+  paths?: Paths;
+  og?: string;
+  schema?: object[];
+}
+const { lang, page, title, description, preload, paths, schema = [] } = Astro.props;
+const url = (l: Lang) => new URL((paths ?? routes[page])[l], company.site).href;
+const og = new URL(`/og/${lang}-${Astro.props.og ?? page}.jpg`, company.site).href;
+
+// Page names for breadcrumbs in search results.
+const c = t[lang];
+const names: Partial<Record<PageKey, string>> = {
+  home: c.home, start: st[lang].cta, checklist: lang === 'fr' ? 'Liste des documents' : 'Document checklist', desk: 'Service Desk',
+  ...Object.fromEntries([...c.nav, ...c.footer.companyLinks, ...c.footer.legalLinks].map((n) => [n.key, n.label])),
+  ...Object.fromEntries(c.divisions.items.map((d) => [d.key, d.name])),
+};
+const divisionKeys: PageKey[] = ['business', 'hr', 'travel'];
+const parents: PageKey[] = divisionKeys.includes(page) || page === 'desk' ? ['services'] : page === 'checklist' ? ['services', 'travel'] : [];
+const trail: PageKey[] = page === 'home' || paths ? [] : ['home', ...parents, page];
+const division = c.divisions.items.find((d) => d.key === page);
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: company.legalName,
+  alternateName: 'Nexora',
+  url: company.site,
+  email: company.email,
+  telephone: company.phone.replace(/ /g, ''),
+  logo: new URL('/img/logo-color.png', company.site).href,
+  slogan: 'Stronger Systems. Smarter Business. Sustainable Growth.',
+  areaServed: 'CM',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Bonabéri',
+    addressLocality: 'Douala',
+    addressRegion: 'Littoral',
+    addressCountry: 'CM',
+  },
+  location: [
+    { '@type': 'Place', name: 'Nexora · Douala', address: { '@type': 'PostalAddress', streetAddress: 'Bonabéri', addressLocality: 'Douala', addressRegion: 'Littoral', addressCountry: 'CM' } },
+    { '@type': 'Place', name: 'Nexora · Nkongsamba', address: { '@type': 'PostalAddress', streetAddress: 'La Piste', addressLocality: 'Nkongsamba', addressRegion: 'Littoral', addressCountry: 'CM' } },
+  ],
+};
+const graph = [
+  orgSchema,
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Nexora Services Company Ltd', url: company.site, inLanguage: ['fr', 'en'] },
+  trail.length && {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: trail.map((k, i) => ({ '@type': 'ListItem', position: i + 1, name: names[k], item: new URL(routes[k][lang], company.site).href })),
+  },
+  division && {
+    '@context': 'https://schema.org', '@type': 'Service', name: division.name, description: division.line, serviceType: division.points.join(', '),
+    provider: { '@type': 'ProfessionalService', name: company.legalName, url: company.site }, areaServed: 'CM', url: url(lang),
+  },
+  ...schema,
+].filter(Boolean);
+---
+<!doctype html>
+<html lang={lang} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>document.documentElement.classList.replace("no-js","js")</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url(lang)} />
+    <link rel="alternate" hreflang="fr" href={url('fr')} />
+    <link rel="alternate" hreflang="en" href={url('en')} />
+    <link rel="alternate" hreflang="x-default" href={url('fr')} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    {preload && <link rel="preload" as="image" href={preload} fetchpriority="high" />}
+    <meta name="theme-color" content="#001D45" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nexora Services Company Ltd" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url(lang)} />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_CM' : 'en_CM'} />
+    <meta property="og:locale:alternate" content={lang === 'fr' ? 'en_CM' : 'fr_CM'} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

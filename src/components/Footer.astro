@@ -1,0 +1,27 @@
+---
+import { company, t, type Lang } from '../i18n/content';
+import { href, startHref } from '../i18n/routes';
+import ContactLinks from './ContactLinks.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href={href(lang, 'home')} aria-label="Nexora Services Company Ltd"><img src="/img/logo-white.png" alt="" width="42" height="31" /><span class="brand-text"><b>NEXORA</b><small>SERVICES COMPANY LTD</small></span></a>
+        <p>{c.footer.tagline}</p>
+        <a class="btn btn-teal btn-sm" href={startHref(lang)}>{c.cta}</a>
+      </div>
+      <div class="footer-col"><p class="footer-h">{c.footer.cols.services}</p>{c.divisions.items.map((d) => <a href={href(lang, d.key)}>{d.name}</a>)}<a href={href(lang, 'desk')}>Service Desk</a><a href={href(lang, 'services')}>{c.allServices}</a></div>
+      <div class="footer-col"><p class="footer-h">{c.footer.cols.company}</p>{c.footer.companyLinks.map((l) => <a href={href(lang, l.key)}>{l.label}</a>)}</div>
+      <div class="footer-col"><p class="footer-h">{c.footer.cols.offices}</p>{c.footer.offices.map((o) => <span>{o}</span>)}<ContactLinks lang={lang} variant="footer" /></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {year} {company.legalName}. {c.footer.rights} · {c.footer.legal}</p>
+      <p class="footer-legal">{c.footer.legalLinks.map((l) => <a href={href(lang, l.key)}>{l.label}</a>)}</p>
+    </div>
+  </div>
+</footer>

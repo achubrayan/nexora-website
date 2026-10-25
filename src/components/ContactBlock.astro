@@ -1,0 +1,39 @@
+---
+import { company, t, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import Icon from './Icon.astro';
+import ContactLinks from './ContactLinks.astro';
+interface Props { lang: Lang; sent?: string }
+const { lang, sent } = Astro.props;
+const c = t[lang];
+const formName = `consultation-${lang}`;
+---
+<div class="contact-grid">
+  <div class="reveal">
+    <div class="offices">
+      {c.contact.offices.map((o) => (
+        <address class="office"><span class="office-icon"><Icon name="map" size={20} /></span><span><strong>{o.label}</strong>{o.lines.map((l) => <span class="l">{l}</span>)}</span></address>
+      ))}
+    </div>
+    <ContactLinks lang={lang} variant="cards" />
+  </div>
+  <form class="form reveal" name={formName} method="POST" action={`${href(lang, 'contact')}?sent=1`} data-netlify="true" netlify-honeypot="company_website">
+    {sent && <p class="form-sent" data-sent hidden role="status">{sent}</p>}
+    <input type="hidden" name="form-name" value={formName} />
+    <p class="hp"><label>Website <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
+    <div class="field-row">
+      <label for={`f-name-${lang}`}>{c.contact.form.name}<input id={`f-name-${lang}`} name="name" autocomplete="name" required /></label>
+      <label for={`f-org-${lang}`}>{c.contact.form.org}<input id={`f-org-${lang}`} name="organisation" autocomplete="organization" /></label>
+    </div>
+    <div class="field-row">
+      <label for={`f-email-${lang}`}>{c.contact.form.email}<input id={`f-email-${lang}`} name="email" type="email" autocomplete="email" required /></label>
+      <label for={`f-phone-${lang}`}>{c.contact.form.phone}<input id={`f-phone-${lang}`} name="phone" type="tel" autocomplete="tel" /></label>
+    </div>
+    <label for={`f-topic-${lang}`}>{c.contact.form.interest}
+      <select id={`f-topic-${lang}`} name="topic">{c.contact.form.interests.map((i) => <option>{i}</option>)}</select>
+    </label>
+    <label for={`f-msg-${lang}`}>{c.contact.form.message}<textarea id={`f-msg-${lang}`} name="message" rows="5" required></textarea></label>
+    <label class="consent" for={`f-consent-${lang}`}><input id={`f-consent-${lang}`} type="checkbox" name="consent" required /> <span>{c.contact.form.consent} <a href={href(lang, 'privacy')}>{lang === 'fr' ? 'Politique de confidentialité' : 'Privacy policy'}</a></span></label>
+    <button class="btn btn-navy btn-lg" type="submit">{c.contact.form.submit}<Icon name="arrow" size={18} /></button>
+  </form>
+</div>

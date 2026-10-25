@@ -1,0 +1,70 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import CardGrid from '../components/CardGrid.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].about;
+const s = pt[lang].services;
+const words = c.statement.text.split(' ');
+---
+<Page lang={lang} page="about" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede}>
+    <img class="hero-3d" src="/img/visuals/people.webp" alt="" width="900" height="675" />
+  </PageHero>
+
+  <section class="section statement">
+    <div class="wrap statement-grid">
+      <p class="statement-text" data-words>{words.map((w) => <span>{w} </span>)}</p>
+      <div class="purpose">
+        {p.purpose.map((x, i) => <div class="purpose-item reveal" style={`--d:${i}`}><p class="eyebrow">{x.k}</p><p>{x.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.valuesEyebrow}</p><h2>{p.valuesTitle}</h2></header>
+      <CardGrid items={p.values} />
+      <p class="foundations-title foundations-title-dark">{s.foundationsTitle}</p>
+      <div class="foundations foundations-light">
+        {s.foundations.map((f, i) => <div class="foundation reveal" style={`--d:${i}`}><b>{f.name}</b><span>{f.text}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap leaders-grid">
+      <header class="section-head reveal"><p class="eyebrow">{c.leaders.eyebrow}</p><h2>{c.leaders.title}</h2></header>
+      <div class="people">
+        {c.leaders.people.map((x, i) => (
+          <figure class="person reveal" style={`--d:${i}`}>
+            <div class="person-photo"><img src={x.img} alt={x.name} width="360" height="360" /></div>
+            <figcaption><h3>{x.name}</h3><p class="role">{x.role}</p><p>{x.text}</p></figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap split-2">
+      <div class="reveal">
+        <h2 class="h-sm">{p.officesTitle}</h2>
+        <div class="offices">
+          {c.contact.offices.map((o) => <address class="office"><span class="office-icon"><Icon name="map" size={20} /></span><span><strong>{o.label}</strong>{o.lines.map((l) => <span class="l">{l}</span>)}</span></address>)}
+        </div>
+      </div>
+      <div class="identity reveal" style="--d:1">
+        <h2 class="h-sm">{p.identityTitle}</h2>
+        <dl>{p.identity.map((x) => <div><dt>{x.k}</dt><dd>{x.v}</dd></div>)}</dl>
+      </div>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

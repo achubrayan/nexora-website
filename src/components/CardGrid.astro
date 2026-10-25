@@ -1,0 +1,18 @@
+---
+// Numbered cards on a light background. Items may carry points or a note.
+import Icon from './Icon.astro';
+interface Item { name: string; text?: string; points?: string[]; note?: string }
+interface Props { items: Item[]; cols?: 2 | 3 | 4; numbered?: boolean }
+const { items, cols = 3, numbered = true } = Astro.props;
+---
+<div class={`cards cards-${cols}`}>
+  {items.map((it, i) => (
+    <div class="card reveal" style={`--d:${i % cols}`}>
+      {numbered && <span class="card-num">{String(i + 1).padStart(2, '0')}</span>}
+      <h3>{it.name}</h3>
+      {it.text && <p>{it.text}</p>}
+      {it.points && <ul class="ticks">{it.points.map((p) => <li><Icon name="check" size={18} />{p}</li>)}</ul>}
+      {it.note && <p class="division-note">{it.note}</p>}
+    </div>
+  ))}
+</div>

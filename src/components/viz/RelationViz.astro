@@ -1,0 +1,76 @@
+---
+// "One relationship" map: Nexora at the centre, its three divisions, and the client types each one serves.
+import { t, type Lang } from '../../i18n/content';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const L = {
+  fr: { core: 'Une seule relation', aria: 'Schéma : Nexora au centre, reliée à ses trois divisions, elles-mêmes reliées aux six types de clients servis.', div: [['Business', 'Solutions'], ['RH &', 'Formation'], ['Travel &', 'Mobilité']] },
+  en: { core: 'One relationship', aria: 'Diagram: Nexora at the centre, linked to its three divisions, which are linked to the six types of clients served.', div: [['Business', 'Solutions'], ['HR &', 'Training'], ['Travel &', 'Mobility']] },
+}[lang];
+const C = [500, 320];
+const pos = (deg: number, rx: number, ry: number) => [C[0] + rx * Math.cos((deg * Math.PI) / 180), C[1] + ry * Math.sin((deg * Math.PI) / 180)];
+const divs = [-90, 30, 150].map((a, i) => ({ i, a, p: pos(a, 200, 140), name: L.div[i] }));
+// Which divisions each client type typically works with (from the client profiles in content.ts).
+const links = [[0, 1], [0, 1], [1, 0], [0, 1, 2], [0, 1], [1, 2]];
+// Placed near the divisions they use, to keep links from crossing: SMEs, Startups, NGOs, Corporations, Institutions, Professionals.
+const angles = [-145, -35, 5, 175, -90, 90];
+const segs = c.clients.items.map((s, i) => ({ i, name: s.name, p: pos(angles[i], 400, 252), to: links[i] }));
+const curve = (a: number[], b: number[]) => {
+  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+  return `M${a[0].toFixed(1)} ${a[1].toFixed(1)}Q${(mx - (C[0] - mx) * 0.18).toFixed(1)} ${(my - (C[1] - my) * 0.18).toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
+};
+const colors = ['#2f86d6', '#11aaa8', '#f2b84b'];
+let k = 0;
+---
+<figure class="rel">
+  <svg class="viz viz-rel" data-viz viewBox="0 0 1000 640" role="img" aria-label={L.aria} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="rel-core" cx=".35" cy=".3"><stop offset="0" stop-color="#3fd0cd" /><stop offset=".55" stop-color="#0b7f7d" /><stop offset="1" stop-color="#035ca0" /></radialGradient>
+      <radialGradient id="rel-halo"><stop offset="0" stop-color="#3fd0cd" stop-opacity=".35" /><stop offset="1" stop-color="#3fd0cd" stop-opacity="0" /></radialGradient>
+      <linearGradient id="rel-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3168" /><stop offset="1" stop-color="#000f26" /></linearGradient>
+    </defs>
+    <rect class="v-frame" width="1000" height="640" rx="28" fill="url(#rel-bg)" />
+    <g class="r-orbits">
+      <ellipse cx={C[0]} cy={C[1]} rx="200" ry="140" class="r-orbit" />
+      <ellipse cx={C[0]} cy={C[1]} rx="400" ry="252" class="r-orbit r-orbit-2" />
+    </g>
+    {segs.map((s) => s.to.map((d) => {
+      const path = curve(divs[d].p, s.p); const i = k++;
+      return (
+        <g>
+          <path d={path} class="r-link" pathLength="1" style={`--i:${i};stroke:${colors[d]}`} />
+          <path d={path} class="r-flow" style={`stroke:${colors[d]}`} />
+          <circle r="3.2" class="m-mover" fill={colors[d]}><animateMotion dur={`${3 + (i % 4) * 0.6}s`} begin={`-${(i * 0.45).toFixed(2)}s`} repeatCount="indefinite" path={path} /></circle>
+        </g>
+      );
+    }))}
+    {divs.map((d) => <path d={`M${C[0]} ${C[1]}L${d.p[0]} ${d.p[1]}`} class="r-spoke" pathLength="1" style={`--i:${d.i};stroke:${colors[d.i]}`} />)}
+    <circle cx={C[0]} cy={C[1]} r="150" fill="url(#rel-halo)" class="m-glow" />
+    {divs.map((d) => (
+      <g class="v-pop" style={`--i:${d.i + 1}`}>
+        <circle cx={d.p[0]} cy={d.p[1]} r="62" class="r-div" style={`stroke:${colors[d.i]}`} />
+        <circle cx={d.p[0]} cy={d.p[1]} r="74" class="m-pulse" style={`--i:${d.i};stroke:${colors[d.i]}`} />
+        <text x={d.p[0]} y={d.p[1] - 4} text-anchor="middle" class="r-div-t">{d.name[0]}</text>
+        <text x={d.p[0]} y={d.p[1] + 17} text-anchor="middle" class="r-div-t">{d.name[1]}</text>
+      </g>
+    ))}
+    {segs.map((s) => {
+      const w = s.name.length * 10.5 + 48;
+      return (
+        <g class="v-pop" style={`--i:${s.i + 4}`}>
+          <rect x={s.p[0] - w / 2} y={s.p[1] - 24} width={w} height="48" rx="24" class="r-seg" />
+          <text x={s.p[0]} y={s.p[1] + 6} text-anchor="middle" class="r-seg-t">{s.name}</text>
+        </g>
+      );
+    })}
+    <g class="v-pop" style="--i:0">
+      <circle cx={C[0]} cy={C[1]} r="82" fill="url(#rel-core)" class="r-core" />
+      <text x={C[0]} y={C[1] + 2} text-anchor="middle" class="r-core-t">NEXORA</text>
+      <text x={C[0]} y={C[1] + 26} text-anchor="middle" class="r-core-s">{L.core}</text>
+    </g>
+  </svg>
+  <figcaption class="rel-legend">
+    {divs.map((d) => <span><i style={`background:${colors[d.i]}`}></i>{d.name.join(' ')}</span>)}
+  </figcaption>
+</figure>

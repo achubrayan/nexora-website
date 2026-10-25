@@ -1,0 +1,70 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Why from '../components/Why.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import NeedsMatrix from '../components/NeedsMatrix.astro';
+import RelationViz from '../components/viz/RelationViz.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+import { href, type PageKey } from '../i18n/routes';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].clientsPage;
+const s = pt[lang].services;
+---
+<Page lang={lang} page="clients" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede}>
+    <img class="hero-3d" src="/img/visuals/business.webp" alt="" width="900" height="675" />
+  </PageHero>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tabs" data-tabs>
+        <div class="tab-list" role="tablist" aria-label={c.clients.eyebrow}>
+          {c.clients.items.map((x, i) => (
+            <button class="tab" role="tab" id={`tab-${i}`} aria-controls={`panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} type="button">{x.name}<Icon name="arrow" size={18} /></button>
+          ))}
+        </div>
+        <div class="tab-panels">
+          {c.clients.items.map((x, i) => (
+            <div class="tab-panel" role="tabpanel" id={`panel-${i}`} aria-labelledby={`tab-${i}`} data-active={i === 0 ? 'true' : 'false'}>
+              <p class="panel-kicker">{x.name}</p>
+              <h3>{x.head}</h3>
+              <p class="panel-label">{c.clients.needsLabel}</p>
+              <ul class="ticks">{x.needs.map((n) => <li><Icon name="check" size={18} />{n}</li>)}</ul>
+              <div class="panel-start"><span>{c.clients.startLabel}</span><strong>{x.start}</strong></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <div class="reveal"><RelationViz lang={lang} /></div>
+      <div class="matrix-gap"><NeedsMatrix lang={lang} /></div>
+    </div>
+  </section>
+
+  <Why lang={lang} />
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{s.startEyebrow}</p><h2>{s.startTitle}</h2></header>
+      <div class="starts">
+        {s.start.map((x, i) => (
+          <a class="start reveal" style={`--d:${i}`} href={href(lang, x.key as PageKey)}>
+            <span class="card-num">{c.divisions.items[i].name}</span>
+            <h3>{x.name}</h3><p>{x.text}</p>
+            <span class="more">{c.divisions.more}<Icon name="arrow" size={18} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

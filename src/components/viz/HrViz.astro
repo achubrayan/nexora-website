@@ -1,0 +1,77 @@
+---
+// Animated organisation chart, skills and training view for HR & Training. Illustrative example, labelled as such.
+import type { Lang } from '../../i18n/content';
+interface Props { lang: Lang; id?: string }
+const { lang, id = 'hr' } = Astro.props;
+const L = {
+  fr: { title: 'Organisation et compétences', ex: 'Exemple illustratif', top: 'Direction générale', units: ['Opérations', 'Finance', 'Commercial'], docs: ['Fiches de poste', "Manuel de l'employé", 'Évaluations annuelles'], ok: 'Validé', wip: 'En cours', skills: 'Compétences clés', sk: ['Leadership', 'Gestion des équipes', 'Outils numériques', 'Service client'], plan: 'Formation', planDone: 'plan réalisé', aria: "Exemple illustratif : organigramme avec trois services, fiches de poste et manuel de l'employé validés, compétences clés de 64 à 85 %, plan de formation réalisé à 86 %." },
+  en: { title: 'Organisation & capability', ex: 'Illustrative example', top: 'Executive management', units: ['Operations', 'Finance', 'Sales'], docs: ['Job descriptions', 'Employee handbook', 'Annual appraisals'], ok: 'Approved', wip: 'In progress', skills: 'Key skills', sk: ['Leadership', 'Team management', 'Digital tools', 'Customer service'], plan: 'Training', planDone: 'plan completed', aria: 'Illustrative example: organisation chart with three departments, job descriptions and employee handbook approved, key skills from 64 to 85%, training plan 86% completed.' },
+}[lang];
+const units = [70, 170, 270];
+const people = units.flatMap((u) => [u - 22, u + 22]);
+const skills = [78, 64, 85, 70];
+---
+<svg id={`${id}-svg`} class="viz viz-hr" data-viz viewBox="0 0 560 420" role="img" aria-label={L.aria} xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id={`${id}-bg`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a3168" /><stop offset="1" stop-color="#000f26" /></linearGradient>
+    <linearGradient id={`${id}-sk`} x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f86d6" /><stop offset="1" stop-color="#3fd0cd" /></linearGradient>
+  </defs>
+  <rect class="v-frame" width="560" height="420" rx="22" fill={`url(#${id}-bg)`} />
+  <g class="v-top">
+    <circle cx="26" cy="26" r="4" /><circle cx="40" cy="26" r="4" /><circle cx="54" cy="26" r="4" />
+    <text x="74" y="31" class="v-title">{L.title}</text>
+    <rect x="404" y="13" width="138" height="26" rx="13" class="v-pill" /><text x="473" y="30.5" text-anchor="middle" class="v-pill-t">{L.ex}</text>
+  </g>
+
+  <g class="v-in" style="--i:0">
+    <rect x="20" y="58" width="304" height="344" rx="14" class="v-card" />
+    <path class="v-link" pathLength="1" d={`M170 122V144M${units[0]} 166V144H${units[2]}V166M170 144V166`} />
+    {units.map((u) => <path class="v-link v-link-2" pathLength="1" d={`M${u} 198V212M${u - 22} 226V212H${u + 22}V226`} />)}
+    <rect x="95" y="80" width="150" height="42" rx="11" class="v-node-top" />
+    <text x="170" y="106" text-anchor="middle" class="v-node-t">{L.top}</text>
+    {units.map((u, i) => (
+      <g class="v-pop" style={`--i:${i + 1}`}>
+        <rect x={u - 45} y="166" width="90" height="32" rx="9" class="v-node" />
+        <text x={u} y="186.5" text-anchor="middle" class="v-node-s">{L.units[i]}</text>
+      </g>
+    ))}
+    {people.map((p, i) => (
+      <g class="v-person" style={`--i:${i}`}>
+        <circle cx={p} cy="242" r="15" class="v-av" />
+        <circle cx={p} cy="238" r="4.6" class="v-av-f" />
+        <path d={`M${p - 8} 251.5a8 6.5 0 0 1 16 0`} class="v-av-f" />
+      </g>
+    ))}
+    <line x1="36" x2="308" y1="282" y2="282" class="v-grid" />
+    {L.docs.map((d, i) => (
+      <g class="v-doc" style={`--i:${i}`} transform={`translate(36 ${300 + i * 32})`}>
+        <circle cx="10" cy="10" r="10" class:list={[i < 2 ? 'v-ok' : 'v-wip']} />
+        {i < 2 ? <path d="M5.5 10.4l3 3 6-6.4" class="v-tick" pathLength="1" /> : <circle cx="10" cy="10" r="3" class="v-wip-dot" />}
+        <text x="30" y="14.5" class="v-label">{d}</text>
+        <text x="272" y="14.5" text-anchor="end" class:list={['v-small', i < 2 ? 'v-tc' : 'v-tw']}>{i < 2 ? L.ok : L.wip}</text>
+      </g>
+    ))}
+  </g>
+
+  <g class="v-in" style="--i:1">
+    <rect x="340" y="58" width="200" height="204" rx="14" class="v-card" />
+    <text x="356" y="85" class="v-label">{L.skills}</text>
+    {skills.map((s, i) => (
+      <g transform={`translate(356 ${110 + i * 38})`}>
+        <text x="0" y="0" class="v-small v-light">{L.sk[i]}</text>
+        <text x="168" y="0" text-anchor="end" class="v-small v-strong"><tspan data-count={s} data-suf="%">{s}%</tspan></text>
+        <rect x="0" y="9" width="168" height="7" rx="3.5" class="v-track-r" />
+        <rect x="0" y="9" width={168 * s / 100} height="7" rx="3.5" fill={`url(#${id}-sk)`} class="v-fill" style={`--i:${i}`} />
+      </g>
+    ))}
+  </g>
+
+  <g class="v-in" style="--i:2">
+    <rect x="340" y="278" width="200" height="124" rx="14" class="v-card" />
+    <circle cx="396" cy="340" r="34" class="v-track v-track-s" />
+    <circle cx="396" cy="340" r="34" class="v-arc v-arc-s" pathLength="100" transform="rotate(-90 396 340)" />
+    <text x="396" y="346" text-anchor="middle" class="v-mid"><tspan data-count="86" data-suf="%">86%</tspan></text>
+    <text x="444" y="334" class="v-label v-strong">{L.plan}</text>
+    <text x="444" y="352" class="v-small">{L.planDone}</text>
+  </g>
+</svg>

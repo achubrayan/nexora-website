@@ -1,0 +1,260 @@
+---
+// Guided request: a step-by-step form that ends in a ready-to-send WhatsApp message or a Netlify form.
+// Without JavaScript every step shows at once as one ordinary form.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Booking from '../components/Booking.astro';
+import { company, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import { st } from '../i18n/start';
+import { destinations } from '../lib/mobility';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = st[lang];
+const formName = `request-${lang}`;
+const id = (x: string) => `rq-${x}-${lang}`;
+const groups = (['business', 'hr', 'travel'] as const).map((k) => ({ k, label: s.divisions.find((d) => d.v === k)!.label, items: s.services[k] }));
+const dests = [...destinations].sort((a, b) => a[lang].localeCompare(b[lang], lang));
+const i18n = { wa: s.wa, empty: s.summary.empty, stepOf: s.steps.map((_, i) => s.stepOf(i + 1, s.steps.length)), whatsapp: company.whatsapp };
+---
+<Page lang={lang} page="start" title={s.meta.title} description={s.meta.description}>
+  <PageHero lang={lang} eyebrow={s.eyebrow} title={s.title} lede={s.lede} cta={false} size="sm" />
+  <section class="section start-section">
+    <div class="wrap start-grid">
+      <form class="form wizard" name={formName} method="POST" action={`${href(lang, 'start')}?sent=1`} data-netlify="true" netlify-honeypot="company_website" data-wizard data-i18n={JSON.stringify(i18n)} >
+        <p class="form-sent" data-sent hidden role="status">{s.sent}</p>
+        <input type="hidden" name="form-name" value={formName} />
+        <input type="hidden" name="summary" data-summary-field />
+        <p class="hp"><label>Website <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
+
+        <div class="wz-head" aria-hidden="true">
+          <ol class="wz-steps">{s.steps.map((x, i) => <li data-dot={i}><span>{i + 1}</span><b>{x}</b></li>)}</ol>
+          <span class="wz-bar"><i data-bar></i></span>
+        </div>
+        <p class="wz-count" data-count-label aria-live="polite"></p>
+
+        <fieldset class="wz-step" data-step="0">
+          <legend tabindex="-1">{s.q1.title}</legend>
+          <p class="wz-hint">{s.q1.hint}</p>
+          <div class="wz-cards">
+            {s.divisions.map((d) => (
+              <label class="wz-card">
+                <input type="radio" name="division" value={d.label} data-v={d.v} required />
+                <span class="wz-card-icon"><Icon name={d.icon} size={22} /></span>
+                <span class="wz-card-txt"><b>{d.label}</b><small>{d.text}</small></span>
+                <span class="wz-card-check"><Icon name="check" size={16} /></span>
+              </label>
+            ))}
+          </div>
+          <p class="wz-error" data-error hidden>{s.pick}</p>
+          <p class="wz-desk"><Icon name="printer" size={18} /><span>{lang === 'fr' ? 'Juste une impression, une photo, un CV ou un formulaire en ligne ?' : 'Just printing, a photo, a CV or an online form?'} <a href={href(lang, 'desk')}>{lang === 'fr' ? 'Voir le Service Desk' : 'See the Service Desk'}</a></span></p>
+        </fieldset>
+
+        <fieldset class="wz-step" data-step="1">
+          <legend tabindex="-1">{s.q2.title}</legend>
+          <p class="wz-hint">{s.q2.hint}</p>
+          {groups.map((g) => (
+            <div class="wz-group" data-for={g.k}>
+              <p class="wz-sub">{g.label}</p>
+              <div class="wz-chips">
+                {g.items.map((x) => (
+                  <label class="wz-chip"><input type="checkbox" name="services" value={x.label} data-v={x.v} data-visa={x.v.startsWith('visa-') ? '' : undefined} /><span>{x.label}</span></label>
+                ))}
+              </div>
+              {g.k === 'travel' && (
+                <div class="wz-travel">
+                  <label for={id('dest')}>{s.travel.dest}
+                    <select id={id('dest')} name="destination" data-dest>
+                      <option value="">{s.travel.destAny}</option>
+                      {dests.map((d) => <option value={d[lang]} data-id={d.id}>{d[lang]}</option>)}
+                      <option value={s.travel.destOther}>{s.travel.destOther}</option>
+                      <option value={s.travel.destNone}>{s.travel.destNone}</option>
+                    </select>
+                  </label>
+                  <div class="field-row">
+                    <label for={id('when')}>{s.travel.when}<input id={id('when')} name="travel_period" placeholder={s.travel.whenPh} /></label>
+                    <label for={id('who')}>{s.travel.who}<input id={id('who')} name="travellers" type="number" min="1" max="200" inputmode="numeric" /></label>
+                  </div>
+                  <p class="wz-visa" data-visa-note hidden><Icon name="shield" size={18} /><span>{s.visaNote}</span></p>
+                </div>
+              )}
+            </div>
+          ))}
+          <div class="wz-group" data-for="unsure">
+            <label for={id('situation')}>{s.unsure.label}<textarea id={id('situation')} name="situation" rows="4" placeholder={s.unsure.placeholder}></textarea></label>
+          </div>
+          <p class="wz-error" data-error hidden>{s.pick}</p>
+        </fieldset>
+
+        <fieldset class="wz-step" data-step="2">
+          <legend tabindex="-1">{s.q3.title}</legend>
+          <p class="wz-hint">{s.q3.hint}</p>
+          <p class="wz-sub">{s.profileLabel}</p>
+          <div class="wz-chips">
+            {s.profiles.map((x) => <label class="wz-chip"><input type="radio" name="profile" value={x.label} data-v={x.v} /><span>{x.label}</span></label>)}
+          </div>
+          <div class="field-row">
+            <label for={id('size')} data-size>{s.sizeLabel}
+              <select id={id('size')} name="team_size"><option value="">—</option>{s.sizes.map((x) => <option>{x}</option>)}</select>
+            </label>
+            <label for={id('city')}>{s.cityLabel}<input id={id('city')} name="city" placeholder={s.cityPh} autocomplete="address-level2" /></label>
+          </div>
+          <p class="wz-sub">{s.timingLabel}</p>
+          <div class="wz-chips">
+            {s.timings.map((x) => <label class="wz-chip"><input type="radio" name="timing" value={x.label} data-v={x.v} /><span>{x.label}</span></label>)}
+          </div>
+        </fieldset>
+
+        <fieldset class="wz-step" data-step="3">
+          <legend tabindex="-1">{s.q4.title}</legend>
+          <p class="wz-hint">{s.q4.hint}</p>
+          <div class="field-row">
+            <label for={id('name')}>{s.name}<input id={id('name')} name="name" autocomplete="name" required /></label>
+            <label for={id('org')}>{s.org}<input id={id('org')} name="organisation" autocomplete="organization" /></label>
+          </div>
+          <div class="field-row">
+            <label for={id('phone')}>{s.phone}<input id={id('phone')} name="phone" type="tel" autocomplete="tel" placeholder="+237 6 …" required /></label>
+            <label for={id('email')}>{s.email}<input id={id('email')} name="email" type="email" autocomplete="email" /></label>
+          </div>
+          <p class="wz-sub">{s.channelLabel}</p>
+          <div class="wz-chips">
+            {s.channels.map((x, i) => <label class="wz-chip"><input type="radio" name="channel" value={x.label} data-v={x.v} checked={i === 0} /><span>{x.label}</span></label>)}
+          </div>
+          <label for={id('msg')}>{s.message}<textarea id={id('msg')} name="message" rows="3"></textarea></label>
+          <label class="consent" for={id('consent')}><input id={id('consent')} type="checkbox" name="consent" required /> <span>{s.consent} <a href={href(lang, 'privacy')}>{s.privacy}</a></span></label>
+        </fieldset>
+
+        <fieldset class="wz-step" data-step="4">
+          <legend tabindex="-1">{s.q5.title}</legend>
+          <p class="wz-hint">{s.q5.hint}</p>
+          <dl class="wz-review" data-review></dl>
+          <p class="wz-visa" data-visa-note hidden><Icon name="shield" size={18} /><span>{s.visaNote}</span></p>
+          <div class="wz-send">
+            <a class="btn btn-wa btn-lg" href={company.whatsapp} target="_blank" rel="noopener" data-wa><Icon name="whatsapp" size={20} />{s.sendWa}</a>
+            <button class="btn btn-navy btn-lg" type="submit">{s.sendForm}<Icon name="arrow" size={18} /></button>
+          </div>
+          <p class="wz-hint wz-wa-hint">{s.waHint}</p>
+        </fieldset>
+
+        <div class="wz-nav">
+          <button type="button" class="btn btn-line" data-back>{s.back}</button>
+          <button type="button" class="btn btn-teal" data-next>{s.next}<Icon name="arrow" size={18} /></button>
+        </div>
+      </form>
+
+      <aside class="wz-aside">
+        <div class="wz-panel">
+          <p class="eyebrow eyebrow-teal">{s.summary.title}</p>
+          <dl class="wz-sum">
+            {(['need', 'services', 'dest', 'profile', 'timing', 'contact'] as const).map((k) => (
+              <div data-sum-row={k} hidden={k === 'dest'}><dt>{s.summary[k]}</dt><dd data-sum={k}>{s.summary.empty}</dd></div>
+            ))}
+          </dl>
+        </div>
+        <div class="wz-after">
+          <h2>{s.after.title}</h2>
+          <ol>{s.after.items.map((x, i) => <li><span>{String(i + 1).padStart(2, '0')}</span><p>{x}</p></li>)}</ol>
+          <Booking lang={lang} />
+          <p class="wz-direct"><a href={company.tel}><Icon name="phone" size={16} />{company.phone}</a><a href={`mailto:${company.email}`}><Icon name="mail" size={16} />{company.email}</a></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <script is:inline>
+  (() => {
+    const f = document.querySelector('[data-wizard]'); if (!f) return;
+    const T = JSON.parse(f.dataset.i18n);
+    const steps = [...f.querySelectorAll('.wz-step')], dots = [...f.querySelectorAll('[data-dot]')];
+    const bar = f.querySelector('[data-bar]'), label = f.querySelector('[data-count-label]');
+    const back = f.querySelector('[data-back]'), next = f.querySelector('[data-next]');
+    const groups = [...f.querySelectorAll('.wz-group')];
+    const q = (sel) => f.querySelector(sel), qa = (sel) => [...f.querySelectorAll(sel)];
+    const checked = (name) => q(`input[name="${name}"]:checked`);
+    const val = (name) => (f.elements[name] && f.elements[name].value || '').trim();
+    let cur = 0;
+    f.classList.add('is-wizard');
+
+    const division = () => (checked('division') || {}).dataset?.v || '';
+    const visible = (el) => !el.closest('[hidden]');
+
+    // Show the details that belong to the chosen division, and the visa note when a visa file is selected.
+    const sync = () => {
+      const d = division();
+      groups.forEach((g) => g.hidden = !!d && g.dataset.for !== d);
+      const visa = d === 'travel' && qa('[data-for="travel"] [data-visa]:checked').length > 0;
+      qa('[data-visa-note]').forEach((n) => n.hidden = !visa);
+      const indiv = (checked('profile') || {}).dataset?.v === 'individual';
+      q('[data-size]').hidden = indiv;
+      render();
+    };
+
+    const data = () => {
+      const d = division();
+      const services = d === 'unsure' ? val('situation') : qa(`[data-for="${d}"] input[name="services"]:checked`).map((c) => c.value).join(', ');
+      const travel = d === 'travel';
+      const indiv = (checked('profile') || {}).dataset?.v === 'individual';
+      return {
+        need: (checked('division') || {}).value || '', services,
+        dest: travel ? val('destination') : '', when: travel ? val('travel_period') : '', who: travel ? val('travellers') : '',
+        profile: (checked('profile') || {}).value || '', size: indiv ? '' : val('team_size'), timing: (checked('timing') || {}).value || '', city: val('city'),
+        name: val('name'), org: val('organisation'), phone: val('phone'), email: val('email'), channel: (checked('channel') || {}).value || '', note: val('message'),
+      };
+    };
+
+    const render = () => {
+      const x = data();
+      const sum = { need: x.need, services: x.services, dest: x.dest, profile: [x.profile, x.size].filter(Boolean).join(' · '), timing: x.timing, contact: [x.name, x.phone].filter(Boolean).join(' · ') };
+      Object.entries(sum).forEach(([k, v]) => { const el = document.querySelector(`[data-sum="${k}"]`); if (!el) return; el.textContent = v || T.empty; el.classList.toggle('empty', !v); });
+      document.querySelector('[data-sum-row="dest"]').hidden = division() !== 'travel';
+      document.querySelectorAll('[data-sum]').forEach((el) => el.closest('[data-sum-row]').classList.toggle('done', !el.classList.contains('empty')));
+      const rows = [['need', x.need], ['services', x.services], ['dest', x.dest], ['when', x.when], ['who', x.who], ['profile', x.profile], ['size', x.size], ['timing', x.timing], ['city', x.city], ['name', x.name], ['org', x.org], ['email', x.email], ['channel', x.channel], ['note', x.note]].filter(([, v]) => v);
+      const text = [T.wa.hello, '', ...rows.map(([k, v]) => `• ${T.wa[k]}${T.wa.sep}${v}`)].join('\n');
+      q('[data-summary-field]').value = text + (x.phone ? `\n• ${T.wa.phone}${T.wa.sep}${x.phone}` : '');
+      q('[data-wa]').href = `${T.whatsapp}?text=${encodeURIComponent(text)}`;
+      const review = q('[data-review]'); review.textContent = '';
+      [...rows, ['phone', x.phone]].filter(([, v]) => v).forEach(([k, v]) => { const r = document.createElement('div'); const dt = document.createElement('dt'); const dd = document.createElement('dd'); dt.textContent = T.wa[k]; dd.textContent = v; r.append(dt, dd); review.append(r); });
+    };
+
+    const error = (step, on) => { const e = step.querySelector('[data-error]'); if (e) e.hidden = !on; };
+    const validate = (i) => {
+      const step = steps[i]; error(step, false);
+      if (i === 0 && !division()) { error(step, true); return false; }
+      if (i === 1) {
+        const d = division();
+        if (d === 'unsure') { const t = f.elements.situation; t.required = true; const ok = t.reportValidity(); t.required = false; return ok; }
+        if (!qa(`[data-for="${d}"] input[name="services"]:checked`).length) { error(step, true); return false; }
+      }
+      return [...step.querySelectorAll('input, select, textarea')].filter(visible).every((el) => el.reportValidity());
+    };
+
+    const show = (i, focus) => {
+      cur = i;
+      steps.forEach((s, j) => s.hidden = j !== i);
+      dots.forEach((d, j) => { d.classList.toggle('done', j < i); d.classList.toggle('now', j === i); });
+      bar.style.width = `${(i / (steps.length - 1)) * 100}%`;
+      label.textContent = T.stepOf[i];
+      back.hidden = i === 0; next.hidden = i === steps.length - 1;
+      if (focus) { const lg = steps[i].querySelector('legend'); lg.focus({ preventScroll: true }); const top = f.getBoundingClientRect().top + scrollY - 110; if (scrollY > top) scrollTo({ top, behavior: 'smooth' }); }
+    };
+
+    next.addEventListener('click', () => { if (validate(cur)) show(cur + 1, true); });
+    back.addEventListener('click', () => show(cur - 1, true));
+    f.addEventListener('input', sync); f.addEventListener('change', sync);
+    f.addEventListener('change', (e) => { if (e.target.name === 'division') { error(steps[0], false); setTimeout(() => show(1, true), 260); } });
+    f.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT' && cur < steps.length - 1) { e.preventDefault(); next.click(); } });
+    f.addEventListener('submit', (e) => { if (cur < steps.length - 1) { e.preventDefault(); next.click(); return; } if (![0, 1, 3].every(validate)) e.preventDefault(); });
+
+    // Links from the division pages can preselect a division (?d=), a service (?s=) and a destination (?dest=).
+    const p = new URLSearchParams(location.search);
+    const pre = p.get('d') && q(`input[name="division"][data-v="${p.get('d')}"]`);
+    if (pre) pre.checked = true;
+    (p.get('s') || '').split(',').forEach((v) => { const c = v && q(`[data-for="${p.get('d')}"] input[name="services"][data-v="${v}"]`); if (c) c.checked = true; });
+    const dest = p.get('dest') && q(`[data-dest] option[data-id="${p.get('dest')}"]`); if (dest) dest.selected = true;
+    sync();
+    if (p.get('sent') === '1') { steps.forEach((s) => s.hidden = true); q('.wz-nav').hidden = true; q('.wz-head').hidden = true; label.hidden = true; return; }
+    show(pre ? 1 : 0, false);
+  })();
+  </script>
+</Page>

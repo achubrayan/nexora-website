@@ -1,0 +1,6 @@
+---
+import Prose from './Prose.astro';
+import type { Lang } from '../i18n/content';
+const { lang } = Astro.props as { lang: Lang };
+---
+<Prose lang={lang} which="legal" />

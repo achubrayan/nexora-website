@@ -1,0 +1,27 @@
+---
+import { t, type Lang } from '../i18n/content';
+import Icon from './Icon.astro';
+interface Props { lang: Lang }
+const c = t[Astro.props.lang];
+---
+<section class="section section-soft">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="eyebrow">{c.why.eyebrow}</p>
+      <h2>{c.why.title}</h2>
+    </header>
+    <div class="why">
+      {c.why.items.map((w, i) => (
+        <div class="why-item reveal" style={`--d:${i % 3}`}>
+          <span class="why-icon"><Icon name={w.icon} /></span>
+          <h3>{w.name}</h3>
+          <p>{w.text}</p>
+        </div>
+      ))}
+    </div>
+    <div class="promise reveal">
+      <span class="why-icon"><Icon name="shield" /></span>
+      <div><h3>{c.why.promiseTitle}</h3><p>{c.why.promise}</p></div>
+    </div>
+  </div>
+</section>

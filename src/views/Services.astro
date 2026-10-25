@@ -1,0 +1,67 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import DivisionRows from '../components/DivisionRows.astro';
+import CardGrid from '../components/CardGrid.astro';
+import Offers from '../components/Offers.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import NeedsMatrix from '../components/NeedsMatrix.astro';
+import { t, type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+import { href, type PageKey } from '../i18n/routes';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const p = pt[lang].services;
+---
+<Page lang={lang} page="services" title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede}>
+    <img class="hero-3d hero-3d-free" src="/img/visuals/hero.webp" alt="" width="1000" height="739" />
+  </PageHero>
+
+  <section class="section-tight foundations-wrap">
+    <div class="wrap">
+      <p class="foundations-title">{p.foundationsTitle}</p>
+      <div class="foundations">
+        {p.foundations.map((f, i) => <div class="foundation reveal" style={`--d:${i}`}><b>{f.name}</b><span>{f.text}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap"><DivisionRows lang={lang} prefix="svc" /></div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{c.clients.eyebrow}</p><h2>{lang === 'fr' ? 'Qui a besoin de quoi' : 'Who needs what'}</h2></header>
+      <NeedsMatrix lang={lang} />
+    </div>
+  </section>
+
+  <section class="section section-soft">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.modelsEyebrow}</p><h2>{p.modelsTitle}</h2></header>
+      <CardGrid items={p.models} />
+    </div>
+  </section>
+
+  <Offers lang={lang} />
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{p.startEyebrow}</p><h2>{p.startTitle}</h2></header>
+      <div class="starts">
+        {p.start.map((s, i) => (
+          <a class="start reveal" style={`--d:${i}`} href={href(lang, s.key as PageKey)}>
+            <span class="card-num">{c.divisions.items[i].name}</span>
+            <h3>{s.name}</h3><p>{s.text}</p>
+            <span class="more">{c.divisions.more}<Icon name="arrow" size={18} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</Page>

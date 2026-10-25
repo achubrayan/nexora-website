@@ -1,0 +1,26 @@
+---
+// Legal notice and privacy policy.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import { type Lang } from '../i18n/content';
+import { pt } from '../i18n/pages';
+interface Props { lang: Lang; which: 'legal' | 'privacy' }
+const { lang, which } = Astro.props;
+const p = pt[lang][which] as any;
+---
+<Page lang={lang} page={which} title={p.meta.title} description={p.meta.description}>
+  <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.updated} cta={false} size="sm" />
+  <section class="section">
+    <div class="wrap prose">
+      {p.sections.map((s: any, i: number) => (
+        <section class="prose-block">
+          <h2><span>{String(i + 1).padStart(2, '0')}</span>{s.h}</h2>
+          <div>
+            {s.p && s.p.map((x: string) => <p>{x}</p>)}
+            {s.list && <ul>{s.list.map((x: string) => <li>{x}</li>)}</ul>}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</Page>
