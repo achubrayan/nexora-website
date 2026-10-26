@@ -124,7 +124,8 @@ const i18n = { visaLabels: tp.visaLabels, waText: L.waText('{v}', '{d}'), whatsa
     const box = document.querySelector('[data-ck]'); if (!box) return;
     const T = JSON.parse(box.dataset.i18n);
     const sel = box.querySelector('[data-ck-dest]'), radios = [...box.querySelectorAll('input[type=radio]')];
-    const store = { get: (k) => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+    const declined = () => { try { return JSON.parse(localStorage.getItem('nexora-consent') || sessionStorage.getItem('nexora-consent') || '{}').choice === 'declined'; } catch { return false; } };
+    const store = { get: (k) => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; } }, set: (k, v) => { if (declined()) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
     let list;
     const render = () => {
       const opt = sel.selectedOptions[0], group = opt.dataset.group, visas = opt.dataset.visas.split(' '), schengen = !!opt.dataset.schengen;

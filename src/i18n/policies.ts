@@ -2,7 +2,7 @@
 // Drafts written for the website on 26 October 2026; to be reviewed by a Cameroonian lawyer like NXR-DOC-009 to 016.
 import type { Lang } from './content';
 
-export interface PolicySection { h: string; p?: string[]; list?: string[] }
+export interface PolicySection { h: string; p?: string[]; list?: string[]; reset?: string }
 export interface Policy { meta: { title: string; description: string }; eyebrow: string; title: string; updated: string; intro?: string; sections: PolicySection[] }
 
 const fr: Record<'privacy' | 'confidentiality' | 'cookies', Policy> = {
@@ -49,10 +49,10 @@ const fr: Record<'privacy' | 'confidentiality' | 'cookies', Policy> = {
     title: 'Politique relative aux cookies',
     updated: 'Version 1.0 · en vigueur depuis le 26 octobre 2026',
     sections: [
-      { h: 'En bref', p: ['Ce site n’utilise ni cookies publicitaires, ni outils de suivi, ni mesure d’audience, ni réseaux sociaux intégrés. Il enregistre seulement quelques informations dans votre navigateur pour fonctionner correctement. Rien de tout cela ne nous est transmis.'] },
-      { h: 'Ce que le site enregistre', list: ['Votre choix concernant ce message (« nexora-consent ») : pour ne pas vous le montrer à chaque visite. Conservé jusqu’à ce que vous effaciez les données de votre navigateur.', 'Les pièces cochées dans la liste des documents de voyage (« nexora-ck-… ») : pour retrouver votre progression. Conservées dans votre navigateur jusqu’à ce que vous les effaciez.', 'La conversation avec l’assistant d’aide : effacée à la fermeture de l’onglet.'] },
+      { h: 'En bref', p: ['Ce site n’utilise ni cookies publicitaires, ni outils de suivi, ni mesure d’audience, ni réseaux sociaux intégrés. Avec votre accord, il garde quelques informations dans votre navigateur pour vous faciliter la vie. Rien de tout cela ne nous est transmis, et vous pouvez refuser sans perdre l’accès au site.'] },
+      { h: 'Ce que le site enregistre', list: ['Toujours, car indispensable : votre choix concernant le message d’information (« nexora-consent »), pour ne pas vous le montrer à chaque visite. Conservé jusqu’à ce que vous effaciez les données de votre navigateur.', 'Seulement si vous acceptez : les pièces cochées dans la liste des documents de voyage (« nexora-ck-… »), pour retrouver votre progression, conservées jusqu’à ce que vous les effaciez ; et la conversation avec l’assistant d’aide, effacée à la fermeture de l’onglet.', 'Si vous refusez, ces deux éléments ne sont pas conservés et ceux déjà enregistrés sont effacés.'] },
       { h: 'Services tiers', p: ['Les polices de caractères sont hébergées sur notre propre site. Les boutons WhatsApp ouvrent WhatsApp seulement lorsque vous cliquez dessus ; WhatsApp applique alors sa propre politique. Notre hébergeur, Netlify, peut enregistrer des journaux techniques (adresse IP, page demandée) pour la sécurité et le bon fonctionnement du site.'] },
-      { h: 'Gérer ces informations', p: ['Vous pouvez effacer à tout moment les données enregistrées par ce site dans les réglages de votre navigateur (rubrique « Cookies et données de site »). Le site continue de fonctionner ; le message d’information réapparaîtra simplement à votre prochaine visite.'] },
+      { h: 'Modifier votre choix', p: ['Vous pouvez changer d’avis à tout moment avec le bouton ci-dessous, ou effacer les données enregistrées par ce site dans les réglages de votre navigateur (rubrique « Cookies et données de site »).'], reset: 'Modifier mon choix' },
       { h: 'Évolutions', p: ['Si nous ajoutons un jour un outil de mesure d’audience ou un autre service non indispensable, nous mettrons à jour cette page et vous demanderons votre accord avant de l’activer.'] },
     ],
   },
@@ -102,10 +102,10 @@ const en: typeof fr = {
     title: 'Cookie policy',
     updated: 'Version 1.0 · effective 26 October 2026',
     sections: [
-      { h: 'In short', p: ['This website uses no advertising cookies, no tracking, no audience measurement and no embedded social networks. It only stores a few items in your browser so that it works properly. None of this is sent to us.'] },
-      { h: 'What the website stores', list: ['Your choice on this notice ("nexora-consent"): so we do not show it at every visit. Kept until you clear your browser data.', 'The items you tick in the travel document checklist ("nexora-ck-…"): so you can pick up where you left off. Kept in your browser until you clear them.', 'Your conversation with the help assistant: deleted when you close the tab.'] },
+      { h: 'In short', p: ['This website uses no advertising cookies, no tracking, no audience measurement and no embedded social networks. With your agreement, it keeps a few items in your browser to make things easier for you. None of this is sent to us, and you can decline without losing access to the site.'] },
+      { h: 'What the website stores', list: ['Always, because it is essential: your choice on the notice ("nexora-consent"), so we do not show it at every visit. Kept until you clear your browser data.', 'Only if you accept: the items you tick in the travel document checklist ("nexora-ck-…"), so you can pick up where you left off, kept until you clear them; and your conversation with the help assistant, deleted when you close the tab.', 'If you decline, neither is kept, and anything already stored is deleted.'] },
       { h: 'Third-party services', p: ['Fonts are served from our own website. WhatsApp buttons open WhatsApp only when you click them; WhatsApp’s own policy then applies. Our host, Netlify, may keep technical logs (IP address, page requested) for security and to run the website.'] },
-      { h: 'Managing this information', p: ['You can clear the data this website stores at any time in your browser settings (under "Cookies and site data"). The website keeps working; the notice will simply appear again on your next visit.'] },
+      { h: 'Change your choice', p: ['You can change your mind at any time with the button below, or clear the data this website stores in your browser settings (under "Cookies and site data").'], reset: 'Change my choice' },
       { h: 'Changes', p: ['If we ever add audience measurement or another non-essential service, we will update this page and ask for your agreement before turning it on.'] },
     ],
   },

@@ -19,6 +19,7 @@ const p = (which === 'legal' ? pt[lang].legal : policies[lang][which]) as any;
           <div>
             {s.p && s.p.map((x: string) => <p>{x}</p>)}
             {s.list && <ul>{s.list.map((x: string) => <li>{x}</li>)}</ul>}
+            {s.reset && <p><button type="button" class="btn btn-teal" data-consent-reset>{s.reset}</button></p>}
           </div>
         </section>
       ))}

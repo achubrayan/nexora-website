@@ -1162,13 +1162,14 @@ td.g-t .m-dot { background: #e0a43a; box-shadow: 0 0 0 5px rgba(224,164,58,.16);
 .consent-bar-txt .consent-bar-h { color: var(--white); }
 .consent-bar-links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 8px; }
 .consent-bar-links a { color: var(--teal-2); font-weight: 650; font-size: .86rem; }
-.consent-bar .btn { justify-self: start; min-height: 44px; padding-inline: 26px; }
+.consent-bar-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.consent-bar .btn { min-height: 44px; padding-inline: 26px; }
 .consent-bye { animation: consent-out .35s var(--ease) both; }
 @keyframes consent-in { from { opacity: 0; transform: translateY(18px); } }
 @keyframes consent-out { to { opacity: 0; transform: translateY(18px); } }
 @media (max-width: 760px) {
   .consent-bar { left: 8px; right: 8px; bottom: 8px; width: auto; padding: 18px; }
-  .consent-bar .btn { justify-self: stretch; }
+  .consent-bar-btns .btn { flex: 1 1 0; }
   .consent-open .wa-fab, .consent-open .nx-bot { opacity: 0; pointer-events: none; }
 }
 @media (prefers-reduced-motion: reduce) { .consent-bar, .consent-bye { animation: none; } }

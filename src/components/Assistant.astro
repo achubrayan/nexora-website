@@ -45,7 +45,9 @@ const ui = data.ui;
     const KEY = `nexora-bot-${D.lang}`;
     const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9%]+/g, ' ').trim();
     const load = (): Msg[] => { try { return JSON.parse(sessionStorage.getItem(KEY) || '[]'); } catch { return []; } };
-    const save = (m: Msg[]) => { try { sessionStorage.setItem(KEY, JSON.stringify(m.slice(-30))); } catch { /* storage unavailable */ } };
+    // Keep the conversation for the tab only if the visitor did not decline optional storage.
+    const declined = () => { try { return JSON.parse(localStorage.getItem('nexora-consent') || sessionStorage.getItem('nexora-consent') || '{}').choice === 'declined'; } catch { return false; } };
+    const save = (m: Msg[]) => { if (declined()) return; try { sessionStorage.setItem(KEY, JSON.stringify(m.slice(-30))); } catch { /* storage unavailable */ } };
     let msgs: Msg[] = load();
 
     const wa = (q?: string) => `${D.whatsapp}?text=${encodeURIComponent(D.waHello + (q ? q.charAt(0).toLowerCase() + q.slice(1) : ''))}`;
