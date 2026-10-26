@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://www.nexoraservicescompany.com',
+  site: 'https://nexoraservicescompany.com',
   trailingSlash: 'always',
   i18n: {
     locales: ['fr', 'en'],

@@ -10,7 +10,7 @@ export const company = {
   whatsapp: 'https://wa.me/237670513418',
   // Online booking page for first consultations (e.g. a free Google Calendar appointment schedule). Empty: booking goes through WhatsApp.
   booking: '',
-  site: 'https://www.nexoraservicescompany.com',
+  site: 'https://nexoraservicescompany.com',
 };
 
 export type Lang = 'fr' | 'en';
