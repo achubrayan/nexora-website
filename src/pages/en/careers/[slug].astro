@@ -1,0 +1,7 @@
+---
+import Page from '../../../views/Job.astro';
+import { jobs } from '../../../i18n/careers';
+export const getStaticPaths = () => jobs.map((job) => ({ params: { slug: job.slug.en }, props: { job } }));
+const { job } = Astro.props;
+---
+<Page lang="en" job={job} />

@@ -1,0 +1,117 @@
+---
+// Careers hub: why join, open positions with filters, recruitment process and the open application form.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import ApplyForm from '../components/ApplyForm.astro';
+import { type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import { careers, jobs } from '../i18n/careers';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const C = careers[lang];
+const base = href(lang, 'careers');
+const fmt = (d: string) => new Date(d).toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+const list = [...jobs].sort((a, b) => (a.status === b.status ? b.posted.localeCompare(a.posted) : a.status === 'open' ? -1 : 1));
+const depts = [...new Set(list.map((j) => j.department))];
+const contracts = [...new Set(list.map((j) => j.contract))];
+---
+<Page lang={lang} page="careers" title={C.meta.title} description={C.meta.description}>
+  <PageHero lang={lang} eyebrow={C.eyebrow} title={C.title} lede={C.lede} cta={false} size="sm" />
+
+  <section class="section">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{C.whyEyebrow}</p><h2>{C.whyTitle}</h2></header>
+      <div class="desk-promises careers-why">
+        {C.why.map((x, i) => (
+          <div class="desk-card reveal" style={`--d:${i}`}><span class="desk-ico"><Icon name={x.icon} size={22} /></span><h3>{x.name}</h3><p>{x.text}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="offres">
+    <div class="wrap">
+      <header class="section-head reveal"><p class="eyebrow">{C.listEyebrow}</p><h2>{C.listTitle}</h2></header>
+      {list.length === 0 ? (
+        <div class="job-empty reveal">
+          <span class="desk-ico"><Icon name="briefcase" size={24} /></span>
+          <div><h3>{C.emptyTitle}</h3><p>{C.emptyText}</p></div>
+          <a class="btn btn-navy" href="#candidature">{C.emptyCta}<Icon name="arrow" size={18} /></a>
+        </div>
+      ) : (
+        <div data-jobs data-words={JSON.stringify([C.count(0), C.count(1), C.count(2).replace('2', '#')])}>
+          <div class="job-filters">
+            {depts.length > 1 && <label>{C.filterDept}<select data-filter="dept"><option value="">{C.all}</option>{depts.map((d) => <option value={d}>{C.departments[d]}</option>)}</select></label>}
+            {contracts.length > 1 && <label>{C.filterContract}<select data-filter="contract"><option value="">{C.all}</option>{contracts.map((d) => <option value={d}>{C.contracts[d]}</option>)}</select></label>}
+            <p class="job-count" data-count aria-live="polite">{C.count(list.length)}</p>
+          </div>
+          <ul class="job-list">
+            {list.map((j) => (
+              <li data-dept={j.department} data-contract={j.contract} data-deadline={j.deadline ?? ''} data-status={j.status}>
+                <a class="job-card" href={`${base}${j.slug[lang]}/`}>
+                  <span class="job-main">
+                    <span class="job-dept">{C.departments[j.department]}</span>
+                    <b>{j.title[lang]}</b>
+                    <span class="job-meta"><span><Icon name="map" size={15} />{j.location[lang]}</span><span><Icon name="briefcase" size={15} />{C.contracts[j.contract]}</span><span>{C.modes[j.mode]}</span></span>
+                  </span>
+                  <span class="job-side">
+                    <span class="job-closed" data-closed hidden={j.status === 'open'}>{C.closed}</span>
+                    {j.deadline && <small>{C.deadline} : {fmt(j.deadline)}</small>}
+                    <span class="more">{C.view}<Icon name="arrow" size={18} /></span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="job-nomatch" data-nomatch hidden>{C.noMatch}</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split-2">
+      <header class="section-head reveal"><p class="eyebrow">{C.processEyebrow}</p><h2>{C.processTitle}</h2></header>
+      <ol class="next desk-how">
+        {C.process.map((x, i) => <li class="reveal" style={`--d:${i}`}><span>{String(i + 1).padStart(2, '0')}</span><h3>{x.name}</h3><p>{x.text}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="candidature">
+    <div class="wrap apply-grid">
+      <div class="reveal">
+        <p class="eyebrow">{C.spontEyebrow}</p>
+        <h2>{C.spontTitle}</h2>
+        <p class="lede">{C.spontText}</p>
+        <div class="job-notice"><Icon name="shield" size={20} /><div><b>{C.fraudTitle}</b><p>{C.fraudText}</p></div></div>
+        <p class="job-abroad">{C.abroad} <a href={href(lang, 'travel')}>{C.abroadLink}</a></p>
+      </div>
+      <div class="reveal">
+        <ApplyForm lang={lang} action={`${base}?sent=1#candidature`} />
+        <ApplyForm lang={lang} action={`${base}?sent=1`} blueprint />
+      </div>
+    </div>
+  </section>
+</Page>
+
+<script is:inline>
+(() => {
+  const box = document.querySelector('[data-jobs]'); if (!box) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const items = [...box.querySelectorAll('li')];
+  // A job past its deadline shows as closed without a new deploy.
+  items.forEach((li) => { if (li.dataset.status === 'closed' || (li.dataset.deadline && li.dataset.deadline < today)) li.querySelector('[data-closed]').hidden = false; });
+  const sels = [...box.querySelectorAll('[data-filter]')], count = box.querySelector('[data-count]'), none = box.querySelector('[data-nomatch]');
+  const words = JSON.parse(box.dataset.words || 'null');
+  const apply = () => {
+    const f = Object.fromEntries(sels.map((s) => [s.dataset.filter, s.value]));
+    let n = 0;
+    items.forEach((li) => { const ok = (!f.dept || li.dataset.dept === f.dept) && (!f.contract || li.dataset.contract === f.contract); li.hidden = !ok; if (ok) n++; });
+    none.hidden = n > 0;
+    if (words) count.textContent = n === 0 ? words[0] : n === 1 ? words[1] : words[2].replace('#', n);
+  };
+  sels.forEach((s) => s.addEventListener('change', apply));
+})();
+</script>

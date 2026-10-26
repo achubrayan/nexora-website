@@ -3,10 +3,11 @@ import type { APIRoute } from 'astro';
 import { company } from '../i18n/content';
 import { routes } from '../i18n/routes';
 import { articles } from '../i18n/insights';
+import { jobs } from '../i18n/careers';
 
 export const GET: APIRoute = () => {
   const abs = (p: string) => new URL(p, company.site).href;
-  const pages = [...Object.values(routes), ...articles.map((a) => ({ fr: `${routes.insights.fr}${a.slug.fr}/`, en: `${routes.insights.en}${a.slug.en}/` }))];
+  const pages = [...Object.values(routes), ...articles.map((a) => ({ fr: `${routes.insights.fr}${a.slug.fr}/`, en: `${routes.insights.en}${a.slug.en}/` })), ...jobs.filter((j) => j.status === 'open').map((j) => ({ fr: `${routes.careers.fr}${j.slug.fr}/`, en: `${routes.careers.en}${j.slug.en}/` }))];
   const urls = pages.flatMap((r) => (['fr', 'en'] as const).map((l) => `  <url>
     <loc>${abs(r[l])}</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="${abs(r.fr)}" />

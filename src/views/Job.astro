@@ -1,0 +1,94 @@
+---
+// One job offer: details, application form and JobPosting data for search engines.
+import Page from '../layouts/Page.astro';
+import Icon from '../components/Icon.astro';
+import ApplyForm from '../components/ApplyForm.astro';
+import { company, t, type Lang } from '../i18n/content';
+import { href, routes } from '../i18n/routes';
+import { careers, type Job } from '../i18n/careers';
+interface Props { lang: Lang; job: Job }
+const { lang, job: j } = Astro.props;
+const c = t[lang];
+const C = careers[lang];
+const paths = { fr: `${routes.careers.fr}${j.slug.fr}/`, en: `${routes.careers.en}${j.slug.en}/` };
+const url = (p: string) => new URL(p, company.site).href;
+const fmt = (d: string) => new Date(d).toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+const types = { cdi: 'FULL_TIME', cdd: 'TEMPORARY', internship: 'INTERN', freelance: 'CONTRACTOR', parttime: 'PART_TIME' } as const;
+const sections = [[C.sMissions, j.missions], [C.sProfile, j.profile], [C.sPlus, j.plus], [C.sOffer, j.offer]].filter(([, l]) => l) as [string, Record<Lang, string[]>][];
+// Google reads the job description as HTML (written with a helper so the tags stay out of the page template).
+const tag = (n: string, x: string) => `<${n}>${x}</${n}>`;
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'JobPosting', title: j.title[lang], datePosted: j.posted, ...(j.deadline && { validThrough: `${j.deadline}T23:59:59+01:00` }),
+    description: tag('p', j.summary[lang]) + sections.map(([h, l]) => tag('h3', h) + tag('ul', l[lang].map((x) => tag('li', x)).join(''))).join(''),
+    employmentType: types[j.contract], identifier: { '@type': 'PropertyValue', name: company.legalName, value: j.id },
+    hiringOrganization: { '@type': 'Organization', name: company.legalName, sameAs: company.site, logo: url('/img/logo-color.png') },
+    jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressLocality: j.location.en, addressCountry: 'CM' } },
+    ...(j.mode === 'remote' && { jobLocationType: 'TELECOMMUTE', applicantLocationRequirements: { '@type': 'Country', name: 'Cameroon' } }),
+  },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [[c.home, routes.home[lang]], [C.eyebrow, routes.careers[lang]], [j.title[lang], paths[lang]]].map(([name, p], i) => ({ '@type': 'ListItem', position: i + 1, name, item: url(p) })) },
+];
+---
+<Page lang={lang} page="careers" title={`${j.title[lang]} · ${C.eyebrow} · Nexora`} description={j.summary[lang]} paths={paths} og="careers" schema={j.status === 'open' ? schema : schema.slice(1)}>
+  <section class="page-hero page-hero-sm article-hero">
+    <div class="hero-bg" aria-hidden="true"><span class="glow g1"></span><span class="glow g2"></span><span class="grid-lines"></span></div>
+    <div class="wrap article-hero-inner">
+      <nav class="crumbs" aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}><a href={href(lang, 'home')}>{c.home}</a><span aria-hidden="true">/</span><a href={href(lang, 'careers')}>{C.eyebrow}</a></nav>
+      <p class="badge"><span class="dot"></span>{C.departments[j.department]}</p>
+      <h1>{j.title[lang]}</h1>
+      <p class="article-meta">
+        <span>{j.location[lang]}</span><span>{C.contracts[j.contract]}</span><span>{C.modes[j.mode]}</span>
+        <span>{C.posted} <time datetime={j.posted}>{fmt(j.posted)}</time></span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap job-grid">
+      <article class="article job-body">
+        <p class="lede">{j.summary[lang]}</p>
+        {sections.map(([h, l]) => <><h2>{h}</h2><ul class="ticks">{l[lang].map((x) => <li><Icon name="check" size={18} />{x}</li>)}</ul></>)}
+      </article>
+      <aside class="job-facts">
+        <dl>
+          <div><dt>{C.filterDept}</dt><dd>{C.departments[j.department]}</dd></div>
+          <div><dt>{C.filterContract}</dt><dd>{C.contracts[j.contract]}</dd></div>
+          <div><dt>{lang === 'fr' ? 'Lieu' : 'Location'}</dt><dd>{j.location[lang]} · {C.modes[j.mode]}</dd></div>
+          {j.start && <div><dt>{C.start}</dt><dd>{j.start[lang]}</dd></div>}
+          {j.deadline && <div><dt>{C.deadline}</dt><dd><time datetime={j.deadline}>{fmt(j.deadline)}</time></dd></div>}
+        </dl>
+        <a class="btn btn-navy" href="#postuler" data-job-open hidden={j.status !== 'open'}>{C.apply}<Icon name="arrow" size={18} /></a>
+        <a class="more" href={href(lang, 'careers')}>{C.back}<Icon name="arrow" size={18} /></a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="postuler">
+    <div class="wrap apply-grid">
+      <div>
+        <p class="eyebrow">{C.applyTitle}</p>
+        <h2>{j.title[lang]}</h2>
+        <div class="job-notice"><Icon name="shield" size={20} /><div><b>{C.fraudTitle}</b><p>{C.fraudText}</p></div></div>
+      </div>
+      <div data-job-apply data-status={j.status} data-deadline={j.deadline ?? ''}>
+        <div class="job-empty job-closed-box" data-job-closed hidden={j.status === 'open'}>
+          <span class="desk-ico"><Icon name="briefcase" size={24} /></span>
+          <div><h3>{C.closed}</h3><p>{C.closedText}</p></div>
+          <a class="btn btn-navy" href={`${href(lang, 'careers')}#candidature`}>{C.emptyCta}<Icon name="arrow" size={18} /></a>
+        </div>
+        {j.status === 'open' && <ApplyForm lang={lang} job={j} action={`${paths[lang]}?sent=1#postuler`} />}
+      </div>
+    </div>
+  </section>
+</Page>
+
+<script is:inline>
+(() => {
+  // After the deadline the form is replaced by the closed notice, without a new deploy.
+  const box = document.querySelector('[data-job-apply]'); if (!box || !box.dataset.deadline) return;
+  if (new Date().toISOString().slice(0, 10) <= box.dataset.deadline || location.search.includes('sent=1')) return;
+  box.querySelector('[data-job-closed]').hidden = false;
+  box.querySelector('form')?.remove();
+  document.querySelector('[data-job-open]')?.setAttribute('hidden', '');
+})();
+</script>

@@ -1,0 +1,69 @@
+---
+// Job application form (Netlify form with a CV upload). The same component serves a posted job and the open
+// application; `blueprint` renders a hidden copy so Netlify registers the job form even when no job is posted.
+import Icon from './Icon.astro';
+import { type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import { careers, type Job } from '../i18n/careers';
+interface Props { lang: Lang; action: string; job?: Job; blueprint?: boolean }
+const { lang, action, job, blueprint = false } = Astro.props;
+const C = careers[lang];
+const F = C.form;
+const kind = job || blueprint ? 'job-application' : 'spontaneous';
+const formName = `${kind}-${lang}`;
+const id = (s: string) => `${kind}-${s}-${lang}`;
+---
+<form class="form apply-form" name={formName} method="POST" action={action} enctype="multipart/form-data" data-netlify="true" netlify-honeypot="company_website" data-apply hidden={blueprint}>
+  {!blueprint && <p class="form-sent" data-sent hidden role="status">{F.sent}</p>}
+  <input type="hidden" name="form-name" value={formName} />
+  <p class="hp"><label>Website <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
+  {kind === 'job-application' && <>
+    <input type="hidden" name="job_id" value={job?.id ?? ''} />
+    <input type="hidden" name="job_title" value={job?.title[lang] ?? ''} />
+  </>}
+  <div class="field-row">
+    <label for={id('name')}>{F.name}<input id={id('name')} name="name" autocomplete="name" required /></label>
+    <label for={id('email')}>{F.email}<input id={id('email')} name="email" type="email" autocomplete="email" required /></label>
+  </div>
+  <div class="field-row">
+    <label for={id('phone')}>{F.phone}<input id={id('phone')} name="phone" type="tel" autocomplete="tel" required /></label>
+    <label for={id('city')}>{F.city}<input id={id('city')} name="city" autocomplete="address-level2" required /></label>
+  </div>
+  {kind === 'spontaneous' && <>
+    <div class="field-row">
+      <label for={id('area')}>{F.area}
+        <select id={id('area')} name="area">{[...Object.values(C.departments), F.areaOther].map((x) => <option>{x}</option>)}</select>
+      </label>
+      <label for={id('contract')}>{F.contract}
+        <select id={id('contract')} name="contract">{Object.values(C.contracts).map((x) => <option>{x}</option>)}</select>
+      </label>
+    </div>
+    <label for={id('availability')}>{F.availability}<input id={id('availability')} name="availability" placeholder={F.availabilityPh} /></label>
+  </>}
+  <label for={id('linkedin')}>{F.linkedin}<input id={id('linkedin')} name="linkedin" type="url" placeholder="https://www.linkedin.com/in/…" /></label>
+  <label for={id('message')}>{F.message}<textarea id={id('message')} name="message" rows="5" placeholder={F.messagePh} required></textarea></label>
+  <label for={id('cv')} class="apply-file">{F.cv}
+    <input id={id('cv')} name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required data-cv />
+    <small>{F.cvHint}</small>
+    <small class="wz-error" data-cv-error hidden>{F.cvTooBig}</small>
+  </label>
+  <label class="consent" for={id('consent')}><input id={id('consent')} type="checkbox" name="consent" required /> <span>{F.consent} <a href={href(lang, 'privacy')}>{F.privacy}</a></span></label>
+  <button class="btn btn-navy btn-lg" type="submit">{F.submit}<Icon name="arrow" size={18} /></button>
+</form>
+<script>
+  // Netlify keeps CV uploads small; stop files over 2 MB before sending.
+  const MAX = 2 * 1024 * 1024;
+  document.querySelectorAll<HTMLFormElement>('[data-apply]').forEach((form) => {
+    const input = form.querySelector<HTMLInputElement>('[data-cv]');
+    const error = form.querySelector<HTMLElement>('[data-cv-error]');
+    if (!input || !error) return;
+    const check = () => {
+      const tooBig = !!input.files?.[0] && input.files[0].size > MAX;
+      error.hidden = !tooBig;
+      input.setCustomValidity(tooBig ? error.textContent || 'Too large' : '');
+      return !tooBig;
+    };
+    input.addEventListener('change', check);
+    form.addEventListener('submit', (e) => { if (!check()) { e.preventDefault(); input.focus(); } });
+  });
+</script>

@@ -14,6 +14,7 @@ export const routes = {
   insights: { fr: '/fr/ressources/', en: '/en/insights/' },
   about: { fr: '/fr/a-propos/', en: '/en/about/' },
   contact: { fr: '/fr/contact/', en: '/en/contact/' },
+  careers: { fr: '/fr/carrieres/', en: '/en/careers/' },
   start: { fr: '/fr/demarrer/', en: '/en/get-started/' },
   legal: { fr: '/fr/mentions-legales/', en: '/en/legal-notice/' },
   privacy: { fr: '/fr/protection-des-donnees/', en: '/en/data-protection/' },

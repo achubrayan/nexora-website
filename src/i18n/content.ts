@@ -191,7 +191,7 @@ const fr = {
   footer: {
     tagline: 'Des systèmes plus solides. Des entreprises plus performantes. Une croissance durable.',
     cols: { services: 'Expertises', company: 'Entreprise', offices: 'Bureaux' },
-    companyLinks: [{ key: 'approach', label: 'Notre approche' }, { key: 'clients', label: 'Nos clients' }, { key: 'insights', label: 'Ressources' }, { key: 'about', label: 'À propos' }, { key: 'contact', label: 'Contact' }] as { key: PageKey; label: string }[],
+    companyLinks: [{ key: 'approach', label: 'Notre approche' }, { key: 'clients', label: 'Nos clients' }, { key: 'insights', label: 'Ressources' }, { key: 'about', label: 'À propos' }, { key: 'careers', label: 'Carrières' }, { key: 'contact', label: 'Contact' }] as { key: PageKey; label: string }[],
     legalLinks: [{ key: 'legal', label: 'Mentions légales' }, { key: 'privacy', label: 'Protection des données' }, { key: 'confidentiality', label: 'Confidentialité' }, { key: 'cookies', label: 'Cookies' }] as { key: PageKey; label: string }[],
     offices: ['Bonabéri, Douala (siège)', 'La Piste, Nkongsamba'],
     legal: 'RCCM CM-DLA-02-2026-B12-00851 · NIU M092618954315E',
@@ -342,7 +342,7 @@ const en: typeof fr = {
   footer: {
     tagline: 'Stronger Systems. Smarter Business. Sustainable Growth.',
     cols: { services: 'Expertise', company: 'Company', offices: 'Offices' },
-    companyLinks: [{ key: 'approach', label: 'Our approach' }, { key: 'clients', label: 'Who we serve' }, { key: 'insights', label: 'Insights' }, { key: 'about', label: 'About' }, { key: 'contact', label: 'Contact' }] as { key: PageKey; label: string }[],
+    companyLinks: [{ key: 'approach', label: 'Our approach' }, { key: 'clients', label: 'Who we serve' }, { key: 'insights', label: 'Insights' }, { key: 'about', label: 'About' }, { key: 'careers', label: 'Careers' }, { key: 'contact', label: 'Contact' }] as { key: PageKey; label: string }[],
     legalLinks: [{ key: 'legal', label: 'Legal notice' }, { key: 'privacy', label: 'Data protection' }, { key: 'confidentiality', label: 'Confidentiality' }, { key: 'cookies', label: 'Cookies' }] as { key: PageKey; label: string }[],
     offices: ['Bonabéri, Douala (registered office)', 'La Piste, Nkongsamba'],
     legal: 'RCCM CM-DLA-02-2026-B12-00851 · NIU M092618954315E',
