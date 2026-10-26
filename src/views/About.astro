@@ -58,6 +58,7 @@ const words = c.statement.text.split(' ');
         <h2 class="h-sm">{p.officesTitle}</h2>
         <div class="offices">
           {c.contact.offices.map((o) => <address class="office"><span class="office-icon"><Icon name="map" size={20} /></span><span><strong>{o.label}</strong>{o.lines.map((l) => <span class="l">{l}</span>)}</span></address>)}
+          <div class="office"><span class="office-icon"><Icon name="clock" size={20} /></span><span><strong>{c.contact.hours.label}</strong>{c.contact.hours.lines.map((l) => <span class="l">{l}</span>)}</span></div>
         </div>
       </div>
       <div class="identity reveal" style="--d:1">

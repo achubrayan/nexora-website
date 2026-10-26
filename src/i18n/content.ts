@@ -11,6 +11,12 @@ export const company = {
   // Online booking page for first consultations (e.g. a free Google Calendar appointment schedule). Empty: booking goes through WhatsApp.
   booking: '',
   site: 'https://nexoraservicescompany.com',
+  // Opening hours (Fabrice, 26 Oct 2026, same as the Google Business Profile). Days: 1 = Monday ... 7 = Sunday.
+  hours: [
+    { days: [1, 2, 3, 5], opens: '09:00', closes: '18:00' },
+    { days: [4], opens: '10:00', closes: '18:30' },
+    { days: [6], opens: '09:00', closes: '15:00' },
+  ],
 };
 
 export type Lang = 'fr' | 'en';
@@ -182,6 +188,7 @@ const fr = {
       { label: 'Siège social · Douala', lines: ['Première rue derrière Hôtel Belavie & Spa', 'Bonabéri, Douala, Région du Littoral'] },
       { label: 'Bureau opérationnel · Nkongsamba', lines: ['La Piste, Nkongsamba', 'Département du Moungo, Région du Littoral'] },
     ],
+    hours: { label: 'Horaires d’ouverture', lines: ['Lundi, mardi, mercredi et vendredi : 9 h – 18 h', 'Jeudi : 10 h – 18 h 30', 'Samedi : 9 h – 15 h', 'Dimanche : fermé'] },
     emailLabel: 'E-mail',
     form: {
       name: 'Nom complet', org: 'Organisation', email: 'E-mail', phone: 'Téléphone (facultatif)', interest: 'Sujet',
@@ -334,6 +341,7 @@ const en: typeof fr = {
       { label: 'Registered office · Douala', lines: ['First street behind Hôtel Belavie & Spa', 'Bonabéri, Douala, Littoral Region'] },
       { label: 'Operational office · Nkongsamba', lines: ['La Piste, Nkongsamba', 'Moungo Division, Littoral Region'] },
     ],
+    hours: { label: 'Opening hours', lines: ['Monday, Tuesday, Wednesday and Friday: 9 am – 6 pm', 'Thursday: 10 am – 6:30 pm', 'Saturday: 9 am – 3 pm', 'Sunday: closed'] },
     emailLabel: 'Email',
     form: {
       name: 'Full name', org: 'Organisation', email: 'Email', phone: 'Phone (optional)', interest: 'Topic',

@@ -43,6 +43,7 @@ const orgSchema = {
   logo: new URL('/img/logo-color.png', company.site).href,
   slogan: 'Stronger Systems. Smarter Business. Sustainable Growth.',
   areaServed: 'CM',
+  openingHoursSpecification: company.hours.map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][d - 1]), opens: h.opens, closes: h.closes })),
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Bonabéri',

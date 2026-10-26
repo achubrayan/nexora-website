@@ -75,6 +75,7 @@ const wa = (text: string) => `${company.whatsapp}?text=${encodeURIComponent(text
         <h3>{d.visit}</h3>
         <div class="offices">
           {c.contact.offices.map((o) => <address class="office"><span class="office-icon"><Icon name="map" size={20} /></span><span><strong>{o.label}</strong>{o.lines.map((l) => <span class="l">{l}</span>)}</span></address>)}
+          <div class="office"><span class="office-icon"><Icon name="clock" size={20} /></span><span><strong>{c.contact.hours.label}</strong>{c.contact.hours.lines.map((l) => <span class="l">{l}</span>)}</span></div>
         </div>
         <p class="desk-call">{d.call} <a href={company.tel}>{company.phone}</a></p>
       </div>
