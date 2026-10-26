@@ -31,8 +31,8 @@ export const jobs: Job[] = [];
 
 const fr = {
   meta: { title: 'Carrières · Rejoindre Nexora Services Company Ltd', description: 'Les offres d’emploi et de stage de Nexora à Douala et Nkongsamba, et la candidature spontanée pour rejoindre notre équipe.' },
-  eyebrow: 'Carrières', title: 'Construisez avec nous des entreprises plus solides.',
-  lede: 'Nous recherchons des personnes rigoureuses, curieuses et fiables pour accompagner nos clients en conseil, en RH, en voyages et au comptoir. Consultez nos offres ou envoyez-nous une candidature spontanée.',
+  eyebrow: 'Carrières', title: 'Rejoignez-nous',
+  lede: 'Construisez avec nous des entreprises plus solides. Nous recherchons des personnes rigoureuses, curieuses et fiables pour accompagner nos clients en conseil, en RH, en voyages et au comptoir. Consultez nos offres ou envoyez-nous une candidature spontanée.',
   whyEyebrow: 'Pourquoi Nexora', whyTitle: 'Un cabinet où l’on apprend vite',
   why: [
     { icon: 'chart', name: 'Un vrai impact', text: 'Vous travaillez sur des problèmes concrets de PME, d’ONG et d’institutions, et vous voyez le résultat.' },
@@ -81,8 +81,8 @@ const fr = {
 
 const en: typeof fr = {
   meta: { title: 'Careers · Join Nexora Services Company Ltd', description: 'Nexora’s job and internship openings in Douala and Nkongsamba, and open applications to join our team.' },
-  eyebrow: 'Careers', title: 'Build stronger organisations with us.',
-  lede: 'We are looking for rigorous, curious and reliable people to support our clients in consulting, HR, travel and at our counter. Browse our openings or send us an open application.',
+  eyebrow: 'Careers', title: 'Join us',
+  lede: 'Build stronger organisations with us. We are looking for rigorous, curious and reliable people to support our clients in consulting, HR, travel and at our counter. Browse our openings or send us an open application.',
   whyEyebrow: 'Why Nexora', whyTitle: 'A consultancy where you learn fast',
   why: [
     { icon: 'chart', name: 'Real impact', text: 'You work on concrete problems for SMEs, NGOs and institutions, and you see the result.' },
