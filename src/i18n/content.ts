@@ -11,6 +11,8 @@ export const company = {
   // Online booking page for first consultations (e.g. a free Google Calendar appointment schedule). Empty: booking goes through WhatsApp.
   booking: '',
   site: 'https://nexoraservicescompany.com',
+  // Google Business Profile of the Nkongsamba office (verified 26 Oct 2026). Swap for the profile's share link if Fabrice sends one.
+  maps: 'https://www.google.com/maps/search/?api=1&query=Nexora%20Services%20Company%20Ltd%20Nkongsamba',
   // Opening hours (Fabrice, 26 Oct 2026, same as the Google Business Profile). Days: 1 = Monday ... 7 = Sunday.
   hours: [
     { days: [1, 2, 3, 5], opens: '09:00', closes: '18:00' },
@@ -185,8 +187,8 @@ const fr = {
     title: 'Parlons de votre prochain défi',
     lede: 'Décrivez votre besoin. Nous vous répondons pour convenir d’une première consultation.',
     offices: [
-      { label: 'Siège social · Douala', lines: ['Première rue derrière Hôtel Belavie & Spa', 'Bonabéri, Douala, Région du Littoral'] },
-      { label: 'Bureau opérationnel · Nkongsamba', lines: ['La Piste, Nkongsamba', 'Département du Moungo, Région du Littoral'] },
+      { map: '', label: 'Siège social · Douala', lines: ['Première rue derrière Hôtel Belavie & Spa', 'Bonabéri, Douala, Région du Littoral'] },
+      { label: 'Bureau opérationnel · Nkongsamba', lines: ['La Piste, Mbaressoumtou, Nkongsamba', 'Département du Moungo, Région du Littoral'], map: 'Voir sur Google Maps' },
     ],
     hours: { label: 'Horaires d’ouverture', lines: ['Lundi, mardi, mercredi et vendredi : 9 h – 18 h', 'Jeudi : 10 h – 18 h 30', 'Samedi : 9 h – 15 h', 'Dimanche : fermé'] },
     emailLabel: 'E-mail',
@@ -338,8 +340,8 @@ const en: typeof fr = {
     title: "Let's talk about your next challenge",
     lede: 'Tell us what you need. We will get back to you to arrange a first consultation.',
     offices: [
-      { label: 'Registered office · Douala', lines: ['First street behind Hôtel Belavie & Spa', 'Bonabéri, Douala, Littoral Region'] },
-      { label: 'Operational office · Nkongsamba', lines: ['La Piste, Nkongsamba', 'Moungo Division, Littoral Region'] },
+      { map: '', label: 'Registered office · Douala', lines: ['First street behind Hôtel Belavie & Spa', 'Bonabéri, Douala, Littoral Region'] },
+      { label: 'Operational office · Nkongsamba', lines: ['La Piste, Mbaressoumtou, Nkongsamba', 'Moungo Division, Littoral Region'], map: 'View on Google Maps' },
     ],
     hours: { label: 'Opening hours', lines: ['Monday, Tuesday, Wednesday and Friday: 9 am – 6 pm', 'Thursday: 10 am – 6:30 pm', 'Saturday: 9 am – 3 pm', 'Sunday: closed'] },
     emailLabel: 'Email',

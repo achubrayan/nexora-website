@@ -1227,3 +1227,5 @@ td.g-t .m-dot { background: #e0a43a; box-shadow: 0 0 0 5px rgba(224,164,58,.16);
 .job-empty[hidden] { display: none; }
 /* Seven menu entries: tighter header spacing so everything stays on one line inside the page width. */
 .nav-desktop a { padding: 8px 8px; } .header-actions { gap: 10px; } .header-actions .btn { padding-inline: 16px; }
+.office-map { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 650; color: var(--blue); text-decoration: none; }
+.office-map:hover { text-decoration: underline; }

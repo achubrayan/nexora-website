@@ -43,6 +43,7 @@ const orgSchema = {
   logo: new URL('/img/logo-color.png', company.site).href,
   slogan: 'Stronger Systems. Smarter Business. Sustainable Growth.',
   areaServed: 'CM',
+  hasMap: company.maps,
   openingHoursSpecification: company.hours.map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][d - 1]), opens: h.opens, closes: h.closes })),
   address: {
     '@type': 'PostalAddress',
@@ -53,7 +54,7 @@ const orgSchema = {
   },
   location: [
     { '@type': 'Place', name: 'Nexora · Douala', address: { '@type': 'PostalAddress', streetAddress: 'Bonabéri', addressLocality: 'Douala', addressRegion: 'Littoral', addressCountry: 'CM' } },
-    { '@type': 'Place', name: 'Nexora · Nkongsamba', address: { '@type': 'PostalAddress', streetAddress: 'La Piste', addressLocality: 'Nkongsamba', addressRegion: 'Littoral', addressCountry: 'CM' } },
+    { '@type': 'Place', name: 'Nexora · Nkongsamba', address: { '@type': 'PostalAddress', streetAddress: 'La Piste, Mbaressoumtou', addressLocality: 'Nkongsamba', addressRegion: 'Littoral', addressCountry: 'CM' } },
   ],
 };
 const graph = [
