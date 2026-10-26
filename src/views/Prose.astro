@@ -1,12 +1,13 @@
 ---
-// Legal notice and privacy policy.
+// Legal notice and the data protection, confidentiality and cookie policies.
 import Page from '../layouts/Page.astro';
 import PageHero from '../components/PageHero.astro';
 import { type Lang } from '../i18n/content';
 import { pt } from '../i18n/pages';
-interface Props { lang: Lang; which: 'legal' | 'privacy' }
+import { policies } from '../i18n/policies';
+interface Props { lang: Lang; which: 'legal' | 'privacy' | 'confidentiality' | 'cookies' }
 const { lang, which } = Astro.props;
-const p = pt[lang][which] as any;
+const p = (which === 'legal' ? pt[lang].legal : policies[lang][which]) as any;
 ---
 <Page lang={lang} page={which} title={p.meta.title} description={p.meta.description}>
   <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.updated} cta={false} size="sm" />

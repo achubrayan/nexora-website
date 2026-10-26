@@ -1,0 +1,38 @@
+---
+// One-time notice about browser storage. The site sets no tracking or advertising cookies, so a single
+// "Accept" is enough; the choice is remembered in localStorage and the notice does not come back.
+import { type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const L = lang === 'fr'
+  ? { title: 'Cookies et confidentialité', text: 'Ce site n’utilise ni publicité ni suivi. Il enregistre seulement le nécessaire dans votre navigateur pour fonctionner, comme votre progression dans la liste des documents ou la conversation avec l’assistant.', cookies: 'Politique relative aux cookies', data: 'Protection des données', ok: 'J’accepte' }
+  : { title: 'Cookies and privacy', text: 'This website uses no advertising or tracking. It only stores what it needs in your browser to work, such as your checklist progress or your conversation with the assistant.', cookies: 'Cookie policy', data: 'Data protection', ok: 'Accept' };
+---
+<div class="consent-bar" role="region" aria-label={L.title} data-consent hidden>
+  <div class="consent-bar-txt">
+    <p class="consent-bar-h">{L.title}</p>
+    <p>{L.text}</p>
+    <p class="consent-bar-links"><a href={href(lang, 'cookies')}>{L.cookies}</a><a href={href(lang, 'privacy')}>{L.data}</a></p>
+  </div>
+  <button type="button" class="btn btn-teal" data-consent-ok>{L.ok}</button>
+</div>
+<script is:inline>
+(() => {
+  const KEY = 'nexora-consent';
+  const bar = document.querySelector('[data-consent]');
+  if (!bar) return;
+  let seen = null;
+  try { seen = localStorage.getItem(KEY); } catch { try { seen = sessionStorage.getItem(KEY); } catch { /* no storage */ } }
+  if (seen) return;
+  bar.hidden = false;
+  document.documentElement.classList.add('consent-open');
+  bar.querySelector('[data-consent-ok]').addEventListener('click', () => {
+    const v = JSON.stringify({ v: 1, at: new Date().toISOString() });
+    try { localStorage.setItem(KEY, v); } catch { try { sessionStorage.setItem(KEY, v); } catch { /* no storage */ } }
+    bar.classList.add('consent-bye');
+    document.documentElement.classList.remove('consent-open');
+    setTimeout(() => { bar.hidden = true; }, 350);
+  });
+})();
+</script>

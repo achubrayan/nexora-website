@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFab from '../components/WhatsAppFab.astro';
 import Assistant from '../components/Assistant.astro';
+import CookieNotice from '../components/CookieNotice.astro';
 import type { Lang } from '../i18n/content';
 import type { PageKey, Paths } from '../i18n/routes';
 interface Props { lang: Lang; page: PageKey; title: string; description: string; preload?: string; paths?: Paths; og?: string; schema?: object[] }
@@ -15,6 +16,7 @@ const { lang, page, title, description, preload, paths, og, schema } = Astro.pro
   <Footer lang={lang} />
   <WhatsAppFab lang={lang} />
   <Assistant lang={lang} />
+  <CookieNotice lang={lang} />
   <script is:inline>
   (() => {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

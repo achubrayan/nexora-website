@@ -16,7 +16,9 @@ export const routes = {
   contact: { fr: '/fr/contact/', en: '/en/contact/' },
   start: { fr: '/fr/demarrer/', en: '/en/get-started/' },
   legal: { fr: '/fr/mentions-legales/', en: '/en/legal-notice/' },
-  privacy: { fr: '/fr/confidentialite/', en: '/en/privacy/' },
+  privacy: { fr: '/fr/protection-des-donnees/', en: '/en/data-protection/' },
+  confidentiality: { fr: '/fr/confidentialite/', en: '/en/confidentiality/' },
+  cookies: { fr: '/fr/cookies/', en: '/en/cookies/' },
 } as const;
 
 export type PageKey = keyof typeof routes;

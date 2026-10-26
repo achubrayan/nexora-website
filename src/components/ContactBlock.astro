@@ -33,7 +33,7 @@ const formName = `consultation-${lang}`;
       <select id={`f-topic-${lang}`} name="topic">{c.contact.form.interests.map((i) => <option>{i}</option>)}</select>
     </label>
     <label for={`f-msg-${lang}`}>{c.contact.form.message}<textarea id={`f-msg-${lang}`} name="message" rows="5" required></textarea></label>
-    <label class="consent" for={`f-consent-${lang}`}><input id={`f-consent-${lang}`} type="checkbox" name="consent" required /> <span>{c.contact.form.consent} <a href={href(lang, 'privacy')}>{lang === 'fr' ? 'Politique de confidentialité' : 'Privacy policy'}</a></span></label>
+    <label class="consent" for={`f-consent-${lang}`}><input id={`f-consent-${lang}`} type="checkbox" name="consent" required /> <span>{c.contact.form.consent} <a href={href(lang, 'privacy')}>{lang === 'fr' ? 'Protection des données' : 'Data protection policy'}</a></span></label>
     <button class="btn btn-navy btn-lg" type="submit">{c.contact.form.submit}<Icon name="arrow" size={18} /></button>
   </form>
 </div>
