@@ -1,6 +1,7 @@
 // Inner-page content in both languages. Source: Corporate Profile NXR-COR-001 v2.0, Privacy Notice NXR-DOC-014 v1.0
 // and recruitment brief NXR-INTREC-2026-002. No invented clients, figures or testimonials.
 import type { Lang } from './content';
+import { credits } from './photos';
 
 const fr = {
   services: {
@@ -201,7 +202,8 @@ const fr = {
       { h: 'Éditeur du site', p: ['NEXORA SERVICES COMPANY LTD', 'RCCM CM-DLA-02-2026-B12-00851 · NIU M092618954315E', 'Siège social : Première rue derrière Hôtel Belavie & Spa, Bonabéri, Douala, Région du Littoral, Cameroun', 'Bureau opérationnel : La Piste, Nkongsamba, Département du Moungo, Région du Littoral, Cameroun', 'E-mail : contact@nexoraservicescompany.com'] },
       { h: 'Directeur de la publication', p: ['Achu Ngando Fabrice, Directeur général et gérant statutaire.'] },
       { h: 'Hébergement', p: ['Le site est hébergé par Netlify, Inc., San Francisco, Californie, États-Unis (netlify.com).'] },
-      { h: 'Propriété intellectuelle', p: ['Les textes, visuels, logos et la marque Nexora présents sur ce site appartiennent à NEXORA SERVICES COMPANY LTD. Toute reproduction sans autorisation écrite préalable est interdite.'] },
+      { h: 'Propriété intellectuelle', p: ['Les textes, visuels, logos et la marque Nexora présents sur ce site appartiennent à NEXORA SERVICES COMPANY LTD, à l’exception des photographies indiquées ci-dessous. Toute reproduction sans autorisation écrite préalable est interdite.'] },
+      { h: 'Crédits photographiques', p: [credits('fr')] },
       { h: 'Responsabilité', p: ['Les informations de ce site sont fournies à titre général et peuvent évoluer. Elles ne constituent ni une offre ferme ni un conseil personnalisé. Les conditions de chaque mission sont fixées par écrit avec le client.', 'Nexora ne garantit ni visa, ni emploi, ni permis, ni décision d’immigration. Les services réglementés sont assurés par des partenaires agréés ou après les formalités légales applicables.'] },
       { h: 'Données personnelles', p: ['Le traitement des données transmises via ce site est décrit dans notre politique de protection des données personnelles, et l’usage du stockage de navigateur dans notre politique relative aux cookies.'] },
       { h: 'Droit applicable', p: ['Le présent site est soumis au droit camerounais et aux Actes uniformes de l’OHADA applicables.'] },
@@ -409,7 +411,8 @@ const en: typeof fr = {
       { h: 'Publisher', p: ['NEXORA SERVICES COMPANY LTD', 'RCCM CM-DLA-02-2026-B12-00851 · NIU M092618954315E', 'Registered office: First street behind Hôtel Belavie & Spa, Bonabéri, Douala, Littoral Region, Cameroon', 'Operational office: La Piste, Nkongsamba, Moungo Division, Littoral Region, Cameroon', 'Email: contact@nexoraservicescompany.com'] },
       { h: 'Publication director', p: ['Achu Ngando Fabrice, Managing Director & Statutory Manager.'] },
       { h: 'Hosting', p: ['This website is hosted by Netlify, Inc., San Francisco, California, United States (netlify.com).'] },
-      { h: 'Intellectual property', p: ['The text, visuals, logos and the Nexora brand on this website belong to NEXORA SERVICES COMPANY LTD. Reproduction without prior written permission is prohibited.'] },
+      { h: 'Intellectual property', p: ['The text, visuals, logos and the Nexora brand on this website belong to NEXORA SERVICES COMPANY LTD, except for the photographs credited below. Reproduction without prior written permission is prohibited.'] },
+      { h: 'Photo credits', p: [credits('en')] },
       { h: 'Liability', p: ['Information on this website is general and may change. It is neither a binding offer nor personalised advice. The terms of each engagement are agreed in writing with the client.', 'Nexora does not guarantee visas, jobs, permits or immigration outcomes. Regulated services are delivered through licensed partners or only after the applicable legal formalities.'] },
       { h: 'Personal data', p: ['How we handle data sent through this website is described in our data protection policy, and browser storage in our cookie policy.'] },
       { h: 'Governing law', p: ['This website is governed by Cameroonian law and the applicable OHADA Uniform Acts.'] },

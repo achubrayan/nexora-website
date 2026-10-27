@@ -1,0 +1,20 @@
+---
+// Three photographs of a division (one large, two small), resized by the Netlify Image CDN.
+import { type Lang } from '../i18n/content';
+import { photos, photoSrc, type PhotoSet } from '../i18n/photos';
+interface Props { lang: Lang; set: PhotoSet }
+const { lang, set } = Astro.props;
+const [main, ...rest] = photos[set];
+const label = { fr: 'Nos métiers en images', en: 'Our work in pictures' };
+const img = (id: number, w: number, h: number, pos?: string) => ({ src: photoSrc(id, w, h, pos), srcset: `${photoSrc(id, w, h, pos)} ${w}w, ${photoSrc(id, w * 2, h * 2, pos)} ${w * 2}w` });
+const big = img(main.id, 760, 600, main.position);
+---
+<section class="section photo-section" aria-label={label[lang]}>
+  <div class="wrap photo-mosaic reveal">
+    <figure class="photo photo-main"><img {...big} sizes="(max-width: 700px) 100vw, 58vw" width="760" height="600" alt={main.alt[lang]} loading="lazy" decoding="async" /></figure>
+    {rest.map((p) => {
+      const s = img(p.id, 560, 360, p.position);
+      return <figure class="photo"><img {...s} sizes="(max-width: 700px) 50vw, 40vw" width="560" height="360" alt={p.alt[lang]} loading="lazy" decoding="async" /></figure>;
+    })}
+  </div>
+</section>

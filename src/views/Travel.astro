@@ -7,6 +7,7 @@ import CtaBand from '../components/CtaBand.astro';
 import Faq from '../components/Faq.astro';
 import { faq } from '../i18n/faq';
 import Icon from '../components/Icon.astro';
+import PhotoMosaic from '../components/PhotoMosaic.astro';
 import { t, type Lang } from '../i18n/content';
 import { pt } from '../i18n/pages';
 import { href, startHref } from '../i18n/routes';
@@ -24,6 +25,7 @@ const visaIcon: Record<Visa, string> = { work: 'briefcase', study: 'cap', visit:
   <PageHero lang={lang} eyebrow={p.eyebrow} title={p.title} lede={p.lede} crumbs={[{ key: 'services', label: c.nav[0].label }]} d="travel">
     <img class="hero-3d" src="/img/visuals/travel.webp" alt="" width="900" height="675" />
   </PageHero>
+  <PhotoMosaic lang={lang} set="travel" />
 
   <section class="section">
     <div class="wrap">
