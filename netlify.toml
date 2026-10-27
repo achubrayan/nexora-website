@@ -5,6 +5,10 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Division photos come from Pexels and are resized by the Netlify Image CDN (/.netlify/images).
+[images]
+  remote_images = ["https://images\\.pexels\\.com/photos/.*"]
+
 [[redirects]]
   from = "/en/privacy/"
   to = "/en/data-protection/"

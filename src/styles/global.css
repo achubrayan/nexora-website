@@ -1229,3 +1229,17 @@ td.g-t .m-dot { background: #e0a43a; box-shadow: 0 0 0 5px rgba(224,164,58,.16);
 .nav-desktop a { padding: 8px 8px; } .header-actions { gap: 10px; } .header-actions .btn { padding-inline: 16px; }
 .office-map { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 650; color: var(--blue); text-decoration: none; }
 .office-map:hover { text-decoration: underline; }
+
+/* v1.1 · Division photographs (Pexels, via the Netlify Image CDN) */
+.photo-section { padding-block: clamp(40px, 6vw, 72px) 0; }
+.photo-mosaic { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-template-rows: 1fr 1fr; gap: 16px; height: clamp(340px, 40vw, 520px); }
+.photo { margin: 0; overflow: hidden; border-radius: 20px; background: var(--soft); box-shadow: 0 30px 60px -40px rgba(0,29,69,.45); }
+.photo-main { grid-row: span 2; }
+.photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.photo:hover img { transform: scale(1.03); }
+@media (max-width: 700px) {
+  .photo-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: auto; height: auto; gap: 10px; }
+  .photo-main { grid-column: span 2; grid-row: auto; aspect-ratio: 4 / 3; }
+  .photo:not(.photo-main) { aspect-ratio: 1 / 1; }
+  .photo { border-radius: 14px; }
+}
