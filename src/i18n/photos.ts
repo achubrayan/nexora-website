@@ -24,6 +24,10 @@ export const photos: Record<PhotoSet, Photo[]> = {
   ],
 };
 
+// Homepage cards: one photo per division, different from the large photo on the division page.
+export const homePhotos: Record<PhotoSet, number> = { business: 9301257, hr: 9034869, travel: 4173219 };
+export const photoById = (id: number) => Object.values(photos).flat().find((p) => p.id === id)!;
+
 // Resized copy from the Netlify Image CDN (remote source allowed in netlify.toml).
 export const photoSrc = (id: number, w: number, h: number, position = 'center') =>
   `/.netlify/images?url=${encodeURIComponent(`https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg`)}&w=${w}&h=${h}&fit=cover&position=${position}&fm=webp&q=72`;

@@ -1,0 +1,39 @@
+---
+// Homepage: one photograph per division, each card leading to the division page.
+import Icon from './Icon.astro';
+import { t, type Lang } from '../i18n/content';
+import { href } from '../i18n/routes';
+import { homePhotos, photoById, photoSrc, type PhotoSet } from '../i18n/photos';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = t[lang];
+const L = {
+  fr: { eyebrow: 'Sur le terrain', title: 'Des services concrets, au plus près de vos besoins', lede: 'Organisation des entreprises, gestion des personnes, voyages et mobilité : trois métiers, une même exigence.', discover: 'Découvrir' },
+  en: { eyebrow: 'On the ground', title: 'Practical services, close to your needs', lede: 'Organising businesses, managing people, travel and mobility: three areas of work, one standard of quality.', discover: 'Discover' },
+}[lang];
+const img = (id: number, w: number, h: number, pos?: string) => ({ src: photoSrc(id, w, h, pos), srcset: `${photoSrc(id, w, h, pos)} ${w}w, ${photoSrc(id, w * 2, h * 2, pos)} ${w * 2}w` });
+---
+<section class="section home-photos">
+  <div class="wrap">
+    <header class="section-head split reveal">
+      <div><p class="eyebrow">{L.eyebrow}</p><h2>{L.title}</h2></div>
+      <p class="lede">{L.lede}</p>
+    </header>
+    <div class="photo-cards">
+      {c.divisions.items.map((d, i) => {
+        const p = photoById(homePhotos[d.key as PhotoSet]);
+        return (
+          <a class="photo-card reveal" style={`--d:${i}`} href={href(lang, d.key)}>
+            <img {...img(p.id, 480, 600, p.position)} sizes="(max-width: 760px) 100vw, 33vw" width="480" height="600" alt={p.alt[lang]} loading="lazy" decoding="async" />
+            <span class="photo-card-body">
+              <span class="photo-card-tag">{d.tag}</span>
+              <b>{d.name}</b>
+              <span class="photo-card-line">{d.line}</span>
+              <span class="photo-card-more">{L.discover}<Icon name="arrow" size={18} /></span>
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</section>

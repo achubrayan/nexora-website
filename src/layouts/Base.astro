@@ -40,7 +40,8 @@ const orgSchema = {
   url: company.site,
   email: company.email,
   telephone: company.phone.replace(/ /g, ''),
-  logo: new URL('/img/logo-color.png', company.site).href,
+  logo: new URL('/favicon-512.png', company.site).href,
+  image: new URL('/favicon-512.png', company.site).href,
   slogan: 'Stronger Systems. Smarter Business. Sustainable Growth.',
   areaServed: 'CM',
   hasMap: company.maps,
@@ -59,7 +60,7 @@ const orgSchema = {
 };
 const graph = [
   orgSchema,
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Nexora Services Company Ltd', url: company.site, inLanguage: ['fr', 'en'] },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Nexora Services Company Ltd', alternateName: 'Nexora Services', url: company.site, inLanguage: ['fr', 'en'] },
   trail.length && {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: trail.map((k, i) => ({ '@type': 'ListItem', position: i + 1, name: names[k], item: new URL(routes[k][lang], company.site).href })),
@@ -83,7 +84,11 @@ const graph = [
     <link rel="alternate" hreflang="fr" href={url('fr')} />
     <link rel="alternate" hreflang="en" href={url('en')} />
     <link rel="alternate" hreflang="x-default" href={url('fr')} />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     {preload && <link rel="preload" as="image" href={preload} fetchpriority="high" />}
     <meta name="theme-color" content="#001D45" />
     <meta property="og:type" content="website" />

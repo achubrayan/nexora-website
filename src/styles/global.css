@@ -1243,3 +1243,25 @@ td.g-t .m-dot { background: #e0a43a; box-shadow: 0 0 0 5px rgba(224,164,58,.16);
   .photo:not(.photo-main) { aspect-ratio: 1 / 1; }
   .photo { border-radius: 14px; }
 }
+
+/* v1.2 · Homepage photo cards, one per division */
+.home-photos { padding-top: 0; }
+.photo-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 8px; }
+.photo-card { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 22px; background: var(--navy); color: #fff; text-decoration: none; isolation: isolate; box-shadow: 0 40px 70px -48px rgba(0,29,69,.6); }
+.photo-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); z-index: -2; }
+.photo-card::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,29,69,0) 35%, rgba(0,29,69,.55) 62%, rgba(0,20,50,.94) 100%); transition: opacity .6s var(--ease); }
+.photo-card-body { position: absolute; inset: auto 0 0; display: grid; gap: 8px; padding: 28px; }
+.photo-card-tag { justify-self: start; font: 700 .78rem/1 var(--display); letter-spacing: .08em; color: var(--navy); background: var(--teal); padding: 6px 10px; border-radius: 999px; }
+.photo-card b { font: 750 clamp(1.35rem, 2vw, 1.7rem)/1.15 var(--display); letter-spacing: -0.02em; }
+.photo-card-line { color: rgba(255,255,255,.82); font-size: .98rem; max-width: 30ch; }
+.photo-card-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; font-weight: 650; color: #7fe0de; }
+.photo-card-more svg { transition: transform .4s var(--ease); }
+.photo-card:hover img, .photo-card:focus-visible img { transform: scale(1.06); }
+.photo-card:hover .photo-card-more svg { transform: translateX(4px); }
+.photo-card:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+@media (max-width: 860px) {
+  .photo-cards { grid-template-columns: 1fr; gap: 14px; }
+  .photo-card { aspect-ratio: 1 / 1; border-radius: 18px; }
+  .photo-card-body { padding: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .photo-card img, .photo-card-more svg { transition: none; } }

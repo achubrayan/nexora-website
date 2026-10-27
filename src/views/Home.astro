@@ -5,6 +5,7 @@ import Icon from '../components/Icon.astro';
 import RelationViz from '../components/viz/RelationViz.astro';
 import DivisionRows from '../components/DivisionRows.astro';
 import CtaBand from '../components/CtaBand.astro';
+import HomePhotos from '../components/HomePhotos.astro';
 import { t, type Lang } from '../i18n/content';
 import { href, startHref } from '../i18n/routes';
 import { desk } from '../i18n/desk';
@@ -50,6 +51,8 @@ const H = {
       </div>
     </div>
   </section>
+
+  <HomePhotos lang={lang} />
 
   <section class="section section-soft">
     <div class="wrap">
